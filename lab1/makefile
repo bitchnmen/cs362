@@ -5,8 +5,7 @@ FLIBS=-lfl
 
 HFILES = 
 
-CCFILES = solnmyshell.c\
-	lex.yy.c
+CCFILES = lex.yy.c
 
 OFILES = $(CCFILES:.c=.o)
 
