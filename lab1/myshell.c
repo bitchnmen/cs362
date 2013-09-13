@@ -122,6 +122,8 @@ int internal_command(char **args) {
   if(strcmp(args[0], "exit") == 0) {
     exit(0);
   }
+  
+  //add more command if statements here******************************************************
 
   return 0;
 }
