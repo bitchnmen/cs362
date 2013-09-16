@@ -3,18 +3,11 @@ CFLAGS=-g
 LIBS=-lpthread 
 FLIBS=-lfl
 
-HFILES = 
-
-CCFILES = lex.yy.c
-
-OFILES = $(CCFILES:.c=.o)
-
-all: link
-
-.cc.o:	 $(CCFILES) $(HFILES)
-	$(CC) $(CFLAGS) -c $*.cc
-
-link:	$(OFILES)
-	$(CC) $(CFLAGS) $(LIBS)  -o run $(OFILES) $(FLIBS)
+all:
+	flex lex.c
+	gcc -g -c lex.yy.c myshell.c
+	gcc -o myshell myshell.o lex.yy.o -lfl 
 clean:
 	rm -f *.o *.*~ run
+	rm -f *.yy.c *.*~ run
+	

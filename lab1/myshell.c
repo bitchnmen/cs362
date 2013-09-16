@@ -12,7 +12,7 @@
 #include <errno.h>
 #include <signal.h>
 
-extern char **getaline();
+extern char **get_line();
 
 /*
  * Handle exit signals from child processes
@@ -45,7 +45,7 @@ main() {
 
     // Print out the prompt and get the input
     printf("->");
-    args = getaline();
+    args = get_line();
 
     // No input, continue
     if(args[0] == NULL)
