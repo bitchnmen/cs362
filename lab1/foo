@@ -1,0 +1,12 @@
+total 86
+drwxr-xr-x. 2 singerbj SFU_Users  4096 Sep 16 22:23 .
+drwxr-xr-x. 2 singerbj SFU_Users    64 Sep 16 19:06 ..
+-rw-r--r--. 1 singerbj SFU_Users     0 Sep 16 22:23 foo
+-rwxr-xr-x. 1 singerbj SFU_Users   376 Sep 16 21:58 lex.c
+-rw-r--r--. 1 singerbj SFU_Users 44293 Sep 16 22:21 lex.yy.c
+-rw-r--r--. 1 singerbj SFU_Users 43560 Sep 16 22:21 lex.yy.o
+-rwxr-xr-x. 1 singerbj SFU_Users   188 Sep 16 20:25 makefile
+-rwxr-xr-x. 1 singerbj SFU_Users 38116 Sep 16 22:21 myshell
+-rwxr-xr-x. 1 singerbj SFU_Users  5365 Sep 16 22:15 myshell.c
+-rw-r--r--. 1 singerbj SFU_Users 14664 Sep 16 22:21 myshell.o
+-rwxr-xr-x. 1 singerbj SFU_Users   278 Sep 12 20:38 test.c

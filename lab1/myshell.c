@@ -72,6 +72,29 @@ main() {
       printf("Redirecting input from: %s\n", input_filename);
       break;
     }
+  
+    //print out args
+    int z;
+    for(z = 0; args[z] != '\0'; z++) {
+      printf("\n Arg is %s", args[z]);
+    } 
+    printf("\n");
+
+    // Check for appended output
+    output = append_output(args, &output_filename);
+   
+    switch(output) {
+    case -1:
+      printf("Syntax error!\n");
+      continue;
+      break;
+    case 0:
+      break;
+    case 1:
+      printf("Appending output to: %s\n", output_filename);
+      break;
+    }
+
 
     // Check for redirected output
     output = redirect_output(args, &output_filename);
@@ -123,8 +146,6 @@ int internal_command(char **args) {
     exit(0);
   }
   
-  //add more command if statements here******************************************************
-
   return 0;
 }
 
@@ -160,7 +181,11 @@ int do_command(char **args, int block,
 
     if(output)
       freopen(output_filename, "w+", stdout);
-
+   
+    //WRONG FIX*************************************************************** 
+    if(input && output)
+      freopen(output_filename, "a+", stdout);
+      
     // Execute the command
     result = execvp(args[0], args);
 
@@ -229,6 +254,38 @@ int redirect_output(char **args, char **output_filename) {
       // Adjust the rest of the arguments in the array
       for(j = i; args[j-1] != NULL; j++) {
 	args[j] = args[j+2];
+      }
+
+      return 1;
+    }
+  }
+
+  return 0;
+}
+/*
+ * Check for output append
+ */
+int append_output(char **args, char **output_filename) {
+  int i;
+  int j;
+
+  for(i = 0; args[i] != NULL; i++) {
+
+    // Look for the >
+    if(args[i][0] == '>' && args[i+1][0] == '>') {
+      free(args[i]);
+      free(args[i+1]);	
+      printf("blah********************");
+      // Get the filename 
+      if(args[i+2] != NULL) {
+	*output_filename = args[i+2];
+      } else {
+	return -1;
+      }
+
+      // Adjust the rest of the arguments in the array
+      for(j = i; args[j-2] != NULL; j++) {
+	args[j] = args[j+3];
       }
 
       return 1;
