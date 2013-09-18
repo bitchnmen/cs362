@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <errno.h>
 #include <signal.h>
+#include <stdbool.h>
 
 extern char **get_line();
 
@@ -36,7 +37,7 @@ main() {
   int input;
   char *output_filename;
   char *input_filename;
-
+  bool append;
   // Set up the signal handler
   sigset(SIGCHLD, sig_handler);
 
@@ -47,6 +48,13 @@ main() {
     printf("->");
     args = get_line();
 
+    //print out args
+    int z;
+    for(z = 0; args[z] != '\0'; z++) {
+      printf("\n Arg is %s", args[z]);
+    } 
+    printf("\n");
+    
     // No input, continue
     if(args[0] == NULL)
       continue;
@@ -72,17 +80,10 @@ main() {
       printf("Redirecting input from: %s\n", input_filename);
       break;
     }
-  
-    //print out args
-    int z;
-    for(z = 0; args[z] != '\0'; z++) {
-      printf("\n Arg is %s", args[z]);
-    } 
-    printf("\n");
 
     // Check for appended output
     output = append_output(args, &output_filename);
-   
+    append = false; 
     switch(output) {
     case -1:
       printf("Syntax error!\n");
@@ -91,6 +92,7 @@ main() {
     case 0:
       break;
     case 1:
+      append = true;
       printf("Appending output to: %s\n", output_filename);
       break;
     }
@@ -114,7 +116,7 @@ main() {
     // Do the command
     do_command(args, block, 
 	       input, input_filename, 
-	       output, output_filename);
+	       output, output_filename, append);
   }
 }
 
@@ -154,7 +156,7 @@ int internal_command(char **args) {
  */
 int do_command(char **args, int block,
 	       int input, char *input_filename,
-	       int output, char *output_filename) {
+	       int output, char *output_filename, bool *append) {
   
   int result;
   pid_t child_id;
@@ -179,13 +181,13 @@ int do_command(char **args, int block,
     if(input)
       freopen(input_filename, "r", stdin);
 
-    if(output)
-      freopen(output_filename, "w+", stdout);
+    if(output && !append)
+      freopen(output_filename, "w", stdout);
    
-    //WRONG FIX*************************************************************** 
-    if(input && output)
+    if(output && append) {
+      printf("appending+++++++++++++++++");
       freopen(output_filename, "a+", stdout);
-      
+    }
     // Execute the command
     result = execvp(args[0], args);
 
@@ -250,12 +252,24 @@ int redirect_output(char **args, char **output_filename) {
       } else {
 	return -1;
       }
+    
+    //print out args
+    int z;
+    for(z = 0; args[z] != '\0'; z++) {
+      printf("\n Arg is %s", args[z]);
+    } 
+    printf("\n");
 
       // Adjust the rest of the arguments in the array
       for(j = i; args[j-1] != NULL; j++) {
 	args[j] = args[j+2];
       }
 
+    //print out args
+    for(z = 0; args[z] != '\0'; z++) {
+      printf("\n Arg is %s", args[z]);
+    } 
+    printf("\n");
       return 1;
     }
   }
@@ -275,7 +289,6 @@ int append_output(char **args, char **output_filename) {
     if(args[i][0] == '>' && args[i+1][0] == '>') {
       free(args[i]);
       free(args[i+1]);	
-      printf("blah********************");
       // Get the filename 
       if(args[i+2] != NULL) {
 	*output_filename = args[i+2];
@@ -283,11 +296,23 @@ int append_output(char **args, char **output_filename) {
 	return -1;
       }
 
+    //print out args
+    int z;
+    for(z = 0; args[z] != '\0'; z++) {
+      printf("\n Arg is %s", args[z]);
+    } 
+    printf("\n");
+    
       // Adjust the rest of the arguments in the array
       for(j = i; args[j-2] != NULL; j++) {
 	args[j] = args[j+3];
       }
 
+    //print out args
+    for(z = 0; args[z] != '\0'; z++) {
+      printf("\n Arg is %s", args[z]);
+    } 
+    printf("\n");
       return 1;
     }
   }
