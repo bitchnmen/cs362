@@ -32,7 +32,7 @@ main() {
   int input;
   char *output_filename;
   char *input_filename;
-  int append;
+  int *append;
   // Set up the signal handler
   sigset(SIGCHLD, sig_handler);
 
