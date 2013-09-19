@@ -5,13 +5,8 @@
  * with "<" and output redirection with ">".
  * However, this is not complete.
  */
-
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <errno.h>
-#include <signal.h>
-#include <stdbool.h>
+ 
+#include "myshell.h"
 
 extern char **get_line();
 
@@ -156,7 +151,7 @@ int internal_command(char **args) {
  */
 int do_command(char **args, int block,
 	       int input, char *input_filename,
-	       int output, char *output_filename, bool *append) {
+	       int output, char *output_filename, bool append) {
   
   int result;
   pid_t child_id;
