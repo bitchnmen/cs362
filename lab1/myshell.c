@@ -37,13 +37,13 @@ main() {
   int input;
   char *output_filename;
   char *input_filename;
-  bool append;
+  int append;
   // Set up the signal handler
   sigset(SIGCHLD, sig_handler);
 
   // Loop forever
   while(1) {
-
+    
     // Print out the prompt and get the input
     printf("->");
     args = get_line();
@@ -81,25 +81,8 @@ main() {
       break;
     }
 
-    // Check for appended output
-    output = append_output(args, &output_filename);
-    append = false; 
-    switch(output) {
-    case -1:
-      printf("Syntax error!\n");
-      continue;
-      break;
-    case 0:
-      break;
-    case 1:
-      append = true;
-      printf("Appending output to: %s\n", output_filename);
-      break;
-    }
-
-
     // Check for redirected output
-    output = redirect_output(args, &output_filename);
+    output = redirect_output(args, &output_filename, &append);
 
     switch(output) {
     case -1:
@@ -117,6 +100,7 @@ main() {
     do_command(args, block, 
 	       input, input_filename, 
 	       output, output_filename, append);
+
   }
 }
 
@@ -156,7 +140,7 @@ int internal_command(char **args) {
  */
 int do_command(char **args, int block,
 	       int input, char *input_filename,
-	       int output, char *output_filename, bool *append) {
+	       int output, char *output_filename, int *append) {
   
   int result;
   pid_t child_id;
@@ -175,19 +159,23 @@ int do_command(char **args, int block,
     return;
   }
 
+  printf("\nappend = %d\nchild_id= %d\n", append, child_id);
+
   if(child_id == 0) {
 
     // Set up redirection in the child process
     if(input)
       freopen(input_filename, "r", stdin);
 
-    if(output && !append)
-      freopen(output_filename, "w", stdout);
-   
-    if(output && append) {
-      printf("appending+++++++++++++++++");
-      freopen(output_filename, "a+", stdout);
+    if(output){
+      if(append == 0){      
+        freopen(output_filename, "w", stdout);
+      }else{
+        printf("appending+++++++++++++++++\n");
+        freopen(output_filename, "a", stdout);
+      }	
     }
+    
     // Execute the command
     result = execvp(args[0], args);
 
@@ -236,14 +224,15 @@ int redirect_input(char **args, char **input_filename) {
 /*
  * Check for output redirection
  */
-int redirect_output(char **args, char **output_filename) {
+int redirect_output(char **args, char **output_filename, int **append) {
   int i;
   int j;
+  *append = 0;
 
   for(i = 0; args[i] != NULL; i++) {
 
     // Look for the >
-    if(args[i][0] == '>') {
+    if(args[i][0] == '>' && args[i+1][0] != '>'){
       free(args[i]);
 
       // Get the filename 
@@ -253,42 +242,18 @@ int redirect_output(char **args, char **output_filename) {
 	return -1;
       }
     
-    //print out args
-    int z;
-    for(z = 0; args[z] != '\0'; z++) {
-      printf("\n Arg is %s", args[z]);
-    } 
-    printf("\n");
-
       // Adjust the rest of the arguments in the array
       for(j = i; args[j-1] != NULL; j++) {
 	args[j] = args[j+2];
       }
 
-    //print out args
-    for(z = 0; args[z] != '\0'; z++) {
-      printf("\n Arg is %s", args[z]);
-    } 
-    printf("\n");
       return 1;
-    }
-  }
 
-  return 0;
-}
-/*
- * Check for output append
- */
-int append_output(char **args, char **output_filename) {
-  int i;
-  int j;
-
-  for(i = 0; args[i] != NULL; i++) {
-
-    // Look for the >
-    if(args[i][0] == '>' && args[i+1][0] == '>') {
+    } else if (args[i][0] == '>' && args[i+1][0] == '>'){
+      *append = 1;
       free(args[i]);
       free(args[i+1]);	
+      
       // Get the filename 
       if(args[i+2] != NULL) {
 	*output_filename = args[i+2];
@@ -296,28 +261,15 @@ int append_output(char **args, char **output_filename) {
 	return -1;
       }
 
-    //print out args
-    int z;
-    for(z = 0; args[z] != '\0'; z++) {
-      printf("\n Arg is %s", args[z]);
-    } 
-    printf("\n");
-    
       // Adjust the rest of the arguments in the array
       for(j = i; args[j-1] != NULL; j++) {
-	args[j+1] = args[j+3];
+	args[j] = args[j+3];
       }
 
-    //print out args
-    for(z = 0; args[z] != '\0'; z++) {
-      printf("\n Arg is %s", args[z]);
-    } 
-    printf("\n");
       return 1;
     }
-  }
-
+  } 
+  
   return 0;
 }
-
 
