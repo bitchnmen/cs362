@@ -304,8 +304,8 @@ int append_output(char **args, char **output_filename) {
     printf("\n");
     
       // Adjust the rest of the arguments in the array
-      for(j = i; args[j-2] != NULL; j++) {
-	args[j] = args[j+3];
+      for(j = i; args[j-1] != NULL; j++) {
+	args[j+1] = args[j+3];
       }
 
     //print out args

@@ -1,9 +1,12 @@
-foo
-lex.c
-lex.yy.c
-lex.yy.o
-makefile
-myshell
-myshell.c
-myshell.o
-test.c
+total 86
+drwx------. 2 sheaffmc 4294967294  4096 Sep 18 10:26 .
+drwxr-xr-x. 2 sheaffmc SFU_Users     64 Sep 18 10:24 ..
+-rwxr-xr-x. 1 sheaffmc SFU_Users      0 Sep 18 10:27 foo
+-rwxr-xr-x. 1 sheaffmc SFU_Users    376 Sep 18 10:24 lex.c
+-rw-r--r--. 1 sheaffmc SFU_Users  44293 Sep 18 10:26 lex.yy.c
+-rw-r--r--. 1 sheaffmc SFU_Users  43568 Sep 18 10:26 lex.yy.o
+-rwxr-xr-x. 1 sheaffmc SFU_Users    188 Sep 18 10:24 makefile
+-rwxr-xr-x. 1 sheaffmc SFU_Users  38612 Sep 18 10:26 myshell
+-rwxr-xr-x. 1 sheaffmc SFU_Users   6003 Sep 18 10:25 myshell.c
+-rw-r--r--. 1 sheaffmc SFU_Users  15528 Sep 18 10:26 myshell.o
+-rwxr-xr-x. 1 sheaffmc SFU_Users    278 Sep 18 10:24 test.c
