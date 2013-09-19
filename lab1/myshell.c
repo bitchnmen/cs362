@@ -32,7 +32,7 @@ main() {
   int input;
   char *output_filename;
   char *input_filename;
-  int *append;
+  int append;
   // Set up the signal handler
   sigset(SIGCHLD, sig_handler);
 
@@ -135,7 +135,7 @@ int internal_command(char **args) {
  */
 int do_command(char **args, int block,
 	       int input, char *input_filename,
-	       int output, char *output_filename, int *append) {
+	       int output, char *output_filename, int append) {
   
   int result;
   pid_t child_id;
@@ -166,7 +166,6 @@ int do_command(char **args, int block,
       if(append == 0){      
         freopen(output_filename, "w", stdout);
       }else{
-        printf("appending+++++++++++++++++\n");
         freopen(output_filename, "a", stdout);
       }	
     }
@@ -219,7 +218,7 @@ int redirect_input(char **args, char **input_filename) {
 /*
  * Check for output redirection
  */
-int redirect_output(char **args, char **output_filename, int **append) {
+int redirect_output(char **args, char **output_filename, int *append) {
   int i;
   int j;
   *append = 0;

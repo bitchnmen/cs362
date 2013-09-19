@@ -18,13 +18,3 @@ myshell.c
 myshell.h
 myshell.o
 test.c
-foo
-lex.c
-lex.yy.c
-lex.yy.o
-makefile
-myshell
-myshell.c
-myshell.h
-myshell.o
-test.c
