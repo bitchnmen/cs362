@@ -42,13 +42,6 @@ main() {
     // Print out the prompt and get the input
     printf("->");
     args = get_line();
-
-    //print out args
-    int z;
-    for(z = 0; args[z] != '\0'; z++) {
-      printf("\n Arg is %s", args[z]);
-    } 
-    printf("\n");
     
     // No input, continue
     if(args[0] == NULL)
@@ -90,11 +83,19 @@ main() {
       printf("Redirecting output to: %s\n", output_filename);
       break;
     }
-
+	
+	int pipes = 0;
+	int i;
+	for(i = 0; args[i] != NULL; i++){
+		if(args[i][0] == '|'){
+			pipes++;
+		}
+	}
+	
     // Do the command
     do_command(args, block, 
 	       input, input_filename, 
-	       output, output_filename, append);
+	       output, output_filename, append, pipes);
 
   }
 }
@@ -135,52 +136,127 @@ int internal_command(char **args) {
  */
 int do_command(char **args, int block,
 	       int input, char *input_filename,
-	       int output, char *output_filename, int append) {
+	       int output, char *output_filename, int append, int pipes) {
   
   int result;
-  pid_t child_id;
   int status;
+  int pid;
+  
+  ////////////////////////////////////////////////////////
+   // The number of commands to run
+    const int commands = pipes + 1;
+    int i = 0;
 
-  // Fork the child process
-  child_id = fork();
+    int pipefds[2*pipes];
 
-  // Check for errors in fork()
-  switch(child_id) {
-  case EAGAIN:
-    perror("Error EAGAIN: ");
-    return;
-  case ENOMEM:
-    perror("Error ENOMEM: ");
-    return;
-  }
-
-  printf("\nappend = %d\nchild_id= %d\n", append, child_id);
-
-  if(child_id == 0) {
-
-    // Set up redirection in the child process
-    if(input)
-      freopen(input_filename, "r", stdin);
-
-    if(output){
-      if(append == 0){      
-        freopen(output_filename, "w", stdout);
-      }else{
-        freopen(output_filename, "a", stdout);
-      }	
+    for(i = 0; i < pipes; i++){
+        if(pipe(pipefds + i*2) < 0) {
+            perror("Couldn't Pipe");
+            exit(EXIT_FAILURE);
+        }
     }
-    
-    // Execute the command
-    result = execvp(args[0], args);
 
-    exit(-1);
-  }
 
-  // Wait for the child process to complete, if necessary
-  if(block) {
-    printf("Waiting for child, pid = %d\n", child_id);
-    result = waitpid(child_id, &status, 0);
-  }
+
+    int j = 0;
+    int k = 0;
+    int s = 1;
+    int place;
+    int commandStarts[10];
+    commandStarts[0] = 0;
+
+    // This loop sets all of the pipes to NULL
+    // And creates an array of where the next
+    // Command starts
+
+    while (args[k] != NULL){
+        if(!strcmp(args[k], "|")){
+            args[k] = NULL;
+            // printf("args[%d] is now NULL", k);
+            commandStarts[s] = k+1;
+            s++;
+        }
+        k++;
+    }
+
+
+
+    for (i = 0; i < commands; ++i) {
+        // place is where in args the program should
+        // start running when it gets to the execution
+        // command
+        place = commandStarts[i];
+
+        pid = fork();
+		
+		// Check for errors in fork()
+		switch(pid) {
+			case EAGAIN:
+			perror("Error EAGAIN: ");
+			return;
+		case ENOMEM:
+			perror("Error ENOMEM: ");
+			return;
+		}
+		
+        if(pid == 0) {
+            
+			// Set up redirection in the child process
+			if(input)
+			freopen(input_filename, "r", stdin);
+
+			if(output){
+				if(append == 0){      
+					freopen(output_filename, "w", stdout);
+				}else{
+					freopen(output_filename, "a", stdout);
+				}	
+			}
+			
+			//if not last command
+            if(i < pipes){
+                if(dup2(pipefds[j + 1], 1) < 0){
+                    perror("dup2");
+                    exit(EXIT_FAILURE);
+                }
+            }
+
+            //if not first command&& j!= 2*pipes
+            if(j != 0 ){
+                if(dup2(pipefds[j-2], 0) < 0){
+                    perror("dup2");
+                    exit(EXIT_FAILURE);
+                }
+            }
+
+            int q;
+            for(q = 0; q < 2*pipes; q++){
+                    close(pipefds[q]);
+            }
+
+            // The commands are executed here, 
+            // but it must be doing it a bit wrong          
+            if( execvp(args[place], args + place) < 0 ){
+                    perror(*args);
+                    exit(EXIT_FAILURE);
+            }
+        }
+        else if(pid < 0){
+            perror("error");
+            exit(EXIT_FAILURE);
+        }
+
+        j+=2;
+    }
+
+    for(i = 0; i < 2 * pipes; i++){
+        close(pipefds[i]);
+    }
+	
+	//maybe insert some stuff here for bg processes
+    for(i = 0; i < pipes + 1; i++){
+        wait(&status);
+    }
 }
 
 /*
