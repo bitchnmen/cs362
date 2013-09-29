@@ -53,7 +53,7 @@ main() {
 
     // Check for an ampersand
     block = (ampersand(args) == 0);
-
+	
     // Check for redirected input
     input = redirect_input(args, &input_filename);
 
@@ -84,18 +84,16 @@ main() {
       break;
     }
 	
-	int pipes = 0;
-	int i;
-	for(i = 0; args[i] != NULL; i++){
-		if(args[i][0] == '|'){
-			pipes++;
-		}
-	}
+	print_array(args);
+	printf("\n\n");
+	
+	handle_symbols(args, block, input, input_filename, 
+	       output, output_filename, append, 0);
 	
     // Do the command
-    do_command(args, block, 
-	       input, input_filename, 
-	       output, output_filename, append, pipes);
+    //do_command(args, block, 
+	//       input, input_filename, 
+	//       output, output_filename, append);
 
   }
 }
@@ -108,7 +106,7 @@ int ampersand(char **args) {
 
   for(i = 1; args[i] != NULL; i++) ;
 
-  if(args[i-1][0] == '&') {
+  if(args[i-1][0] == '&' && args[i][0] != '&') {
     free(args[i-1]);
     args[i-1] = NULL;
     return 1;
@@ -136,17 +134,23 @@ int internal_command(char **args) {
  */
 int do_command(char **args, int block,
 	       int input, char *input_filename,
-	       int output, char *output_filename, int append, int pipes) {
+	       int output, char *output_filename, int append) {
   
-  int result;
-  int status;
-  int pid;
+	int result;
+	int status;
+	int child_id;
   
-  ////////////////////////////////////////////////////////
-   // The number of commands to run
+	//count # of pipes in args
+	int pipes = 0;
+	int i;
+	for(i = 0; args[i] != NULL; i++){
+		if(args[i][0] == '|' && args[i+1][0] != '|'){
+			pipes++;
+		}
+	}
+  
+	// The number of commands to run
     const int commands = pipes + 1;
-    int i = 0;
-
     int pipefds[2*pipes];
 
     for(i = 0; i < pipes; i++){
@@ -155,8 +159,6 @@ int do_command(char **args, int block,
             exit(EXIT_FAILURE);
         }
     }
-
-
 
     int j = 0;
     int k = 0;
@@ -179,27 +181,25 @@ int do_command(char **args, int block,
         k++;
     }
 
-
-
     for (i = 0; i < commands; ++i) {
         // place is where in args the program should
         // start running when it gets to the execution
         // command
         place = commandStarts[i];
 
-        pid = fork();
+        child_id = fork();
 		
 		// Check for errors in fork()
-		switch(pid) {
+		switch(child_id) {
 			case EAGAIN:
 			perror("Error EAGAIN: ");
-			return;
+			return 1;
 		case ENOMEM:
 			perror("Error ENOMEM: ");
-			return;
+			return 1;
 		}
 		
-        if(pid == 0) {
+        if(child_id == 0) {
             
 			// Set up redirection in the child process
 			if(input)
@@ -234,14 +234,13 @@ int do_command(char **args, int block,
                     close(pipefds[q]);
             }
 
-            // The commands are executed here, 
-            // but it must be doing it a bit wrong          
+            // The commands are executed here          
             if( execvp(args[place], args + place) < 0 ){
                     perror(*args);
                     exit(EXIT_FAILURE);
             }
         }
-        else if(pid < 0){
+        else if(child_id < 0){
             perror("error");
             exit(EXIT_FAILURE);
         }
@@ -257,6 +256,8 @@ int do_command(char **args, int block,
     for(i = 0; i < pipes + 1; i++){
         wait(&status);
     }
+	
+	return status;
 }
 
 /*
@@ -326,14 +327,14 @@ int redirect_output(char **args, char **output_filename, int *append) {
       
       // Get the filename 
       if(args[i+2] != NULL) {
-	*output_filename = args[i+2];
+	    *output_filename = args[i+2];
       } else {
 	return -1;
       }
 
       // Adjust the rest of the arguments in the array
       for(j = i; args[j-1] != NULL; j++) {
-	args[j] = args[j+3];
+	    args[j] = args[j+3];
       }
 
       return 1;
@@ -342,4 +343,120 @@ int redirect_output(char **args, char **output_filename, int *append) {
   
   return 0;
 }
+
+int handle_symbols(char **args, int block,
+	       int input, char *input_filename,
+	       int output, char *output_filename, int append, int pipes) {
+	int skip_next = 0;
+	int i;
+	int return_code;
+	int n = 0;
+	    int z = 0;
+	char *new_args[20];
+	for(i = 0; i < sizeof(args); i++){
+		new_args[i] = NULL;
+	}
+	clear_array(new_args);
+
+	for(i = 0; args[i] != NULL; i++){
+		//printf("\ni = %d\n", i);
+    	if(args[i][0] == '('){
+			printf("\ncase = %s", "(");
+			clear_array(new_args);
+			n = 0;
+	
+		}else if(args[i][0] == ')'){
+			printf("\ncase = %s", ")");
+			if(skip_next == 0 && new_args[0] != NULL){
+				do_command(new_args, block, input, input_filename, 
+							output, output_filename, append);
+			}else{
+				skip_next = 0;
+			}
+			clear_array(new_args);
+			n = 0;
+			
+		}else if(args[i][0] == ';'){
+			printf("\ncase = %s", ";");
+			if(skip_next == 0 && new_args[0] != NULL){
+				do_command(new_args, block, input, input_filename, 
+							output, output_filename, append);
+			}else{
+				skip_next = 0;
+			}
+			clear_array(new_args);
+			n = 0;
+
+		}else if(args[i][0] == '&' && args[i+1][0] == '&'){
+			printf("\ncase = %s", "&&");
+            if(skip_next == 0 && new_args[0] != NULL){
+				return_code = do_command(new_args, block, input, input_filename, 
+							output, output_filename, append);
+                printf("\nreturncode = %d\n", return_code);
+			}else{
+				skip_next = 0;
+			}
+			clear_array(new_args);
+			n = 0;
+			
+			i = i + 1;
+			
+			
+			if (return_code != 0) {
+				skip_next = 1;
+			}else{
+				skip_next = 0;
+			}
+			printf("\nskip_next = %d\n", skip_next);
+		}else if(args[i][0] == '|' && args[i+1][0] == '|'){
+			printf("\ncase = %s", "||");
+			if(skip_next == 0 && new_args[0] != NULL){
+				return_code = do_command(new_args, 1, input, input_filename, 
+							output, output_filename, append);
+				printf("return code: %d", return_code);
+			}else{
+				skip_next = 0;
+			}
+			clear_array(new_args);
+			n = 0;
+			
+			i = i + 1;
+			
+            if (return_code != 0) {
+				skip_next = 0;
+			}else{
+				skip_next = 1;
+			}
+			printf("\nskip_next = %d\n", skip_next);
+		}else{
+			printf("\nadd to new_args = %s\n", args[i]);
+			new_args[n] = args[i];
+			n = n + 1;
+             
+            if (args[i+1] == NULL){
+				if(skip_next == 0 && new_args[0] != NULL){
+					do_command(new_args, block, input, input_filename, 
+							output, output_filename, append);
+				}
+			}
+		}
+	}
+}
+
+clear_array(char **new_args){
+	int i;
+	for(i = 0; new_args[i] != NULL; i++){
+		new_args[i] = NULL;
+	}	
+}
+
+print_array(char **args){
+    printf("\n***************************\n");
+	int z;
+    for(z = 0; args[z] != NULL; z++){
+	    printf("\narg is %s\n", args[z]);
+	}
+	printf("\n***************************\n\n");
+}
+
 

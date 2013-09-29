@@ -17,12 +17,13 @@ int ampersand(char**);
 
 int internal_command(char**);
 
-int do_command(char**, int, int, char*, int, char*, int, int);
+int do_command(char**, int, int, char*, int, char*, int);
 
 int redirect_input(char**, char**);
 
 int redirect_output(char**, char**, int*);
 
+int handle_symbols(char**, int, int, char*,int, char*, int, int);
 
 /* lex.c methods */
 char **get_line();
