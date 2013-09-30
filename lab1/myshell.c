@@ -195,7 +195,9 @@ int do_command(char **args, int block,
 		}
 		
         if(child_id == 0) {
-            
+            if(block){
+				setpgid(0, 0);
+			}
 			// Set up redirection in the child process
 			if(input)
 			freopen(input_filename, "r", stdin);
@@ -258,10 +260,12 @@ int do_command(char **args, int block,
     }
 	
 	//maybe insert some stuff here for bg processes
-    for(i = 0; i < pipes + 1; i++){
-        wait(&status);
-    }
-	
+	 if(block) {
+		for(i = 0; i < pipes + 1; i++){
+			wait(&status);
+		}
+	}
+    
 	return status;
 }
 
