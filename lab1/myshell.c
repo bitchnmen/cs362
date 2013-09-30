@@ -14,12 +14,12 @@ extern char **get_line();
  * Handle exit signals from child processes
  */
 void sig_handler(int signal) {
-  int status;
-  int result = wait(&status);
+//int status;
+//int result = wait(&status);
 
-  printf("Wait returned %d\n", result);
-}
-
+//printf("Wait returned %d\n", result);
+	while(waitpid(-1, NULL, WNOHANG) > 0);
+}      
 /*
  * The main shell function
  */ 
@@ -34,7 +34,8 @@ main() {
   char *input_filename;
   int append;
   // Set up the signal handler
-  sigset(SIGCHLD, sig_handler);
+  //sigset(SIGCHLD, SIG_IGN);
+  //sigaction (SIGCHLD, NULL, NULL);
 
   // Loop forever
   while(1) {
@@ -198,6 +199,20 @@ int do_command(char **args, int block,
             if(block){
 				setpgid(0, 0);
 			}
+			/* Set the handling for job control signals back to the default.  */
+			signal(SIGINT, SIG_DFL);
+			signal(SIGQUIT, SIG_DFL);
+			signal(SIGTSTP, SIG_DFL);
+			signal(SIGTTIN, SIG_DFL);
+			signal(SIGTTOU, SIG_DFL);
+			//signal(SIGCHLD, SIG_DFL);
+			
+		
+			dup2 (0, STDIN_FILENO);
+			dup2 (1, STDOUT_FILENO);	
+			dup2 (2, STDERR_FILENO);
+			
+			
 			// Set up redirection in the child process
 			if(input)
 			freopen(input_filename, "r", stdin);
@@ -403,7 +418,6 @@ int handle_symbols(char **args, int block,
             if(skip_next == 0 && new_args[0] != NULL){
 				return_code = do_command(new_args, block, input, input_filename, 
 							output, output_filename, append, subshell);
-                printf("\nreturncode = %d\n", return_code);
 			}else{
 				skip_next = 0;
 			}
@@ -415,13 +429,12 @@ int handle_symbols(char **args, int block,
 			}else{
 				skip_next = 0;
 			}
-			printf("\nskip_next = %d\n", skip_next);
+			//printf("\nskip_next = %d\n", skip_next);
 		}else if(args[i][0] == '|' && args[i+1][0] == '|'){
 			printf("\ncase = %s", "||");
 			if(skip_next == 0 && new_args[0] != NULL){
 				return_code = do_command(new_args, 1, input, input_filename, 
 							output, output_filename, append, subshell);
-				printf("return code: %d", return_code);
 			}else{
 				skip_next = 0;
 			}
@@ -433,9 +446,9 @@ int handle_symbols(char **args, int block,
 			}else{
 				skip_next = 1;
 			}
-			printf("\nskip_next = %d\n", skip_next);
+			//printf("\nskip_next = %d\n", skip_next);
 		}else{
-			printf("\nadd to new_args = %s\n", args[i]);
+			//printf("\nadd to new_args = %s\n", args[i]);
 			new_args[n] = args[i];
 			n = n + 1;
              
@@ -457,12 +470,12 @@ clear_array(char **new_args){
 }
 
 print_array(char **args){
-    printf("\n***************************\n");
-	int z;
-    for(z = 0; args[z] != NULL; z++){
-	    printf("\narg is %s\n", args[z]);
-	}
-	printf("\n***************************\n\n");
+    //printf("\n***************************\n");
+	//int z;
+    //for(z = 0; args[z] != NULL; z++){
+	//    printf("\narg is %s\n", args[z]);
+	//}
+	//printf("\n***************************\n\n");
 }
 
 
