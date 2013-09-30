@@ -17,7 +17,7 @@ int ampersand(char**);
 
 int internal_command(char**);
 
-int do_command(char**, int, int, char*, int, char*, int);
+int do_command(char**, int, int, char*, int, char*, int, int);
 
 int redirect_input(char**, char**);
 

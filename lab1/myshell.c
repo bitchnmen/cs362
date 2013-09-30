@@ -90,11 +90,6 @@ main() {
 	handle_symbols(args, block, input, input_filename, 
 	       output, output_filename, append, 0);
 	
-    // Do the command
-    //do_command(args, block, 
-	//       input, input_filename, 
-	//       output, output_filename, append);
-
   }
 }
 
@@ -134,7 +129,7 @@ int internal_command(char **args) {
  */
 int do_command(char **args, int block,
 	       int input, char *input_filename,
-	       int output, char *output_filename, int append) {
+	       int output, char *output_filename, int append, int subshell) {
   
 	int result;
 	int status;
@@ -234,17 +229,27 @@ int do_command(char **args, int block,
                     close(pipefds[q]);
             }
 
-            // The commands are executed here          
-            if( execvp(args[place], args + place) < 0 ){
+            // The commands are executed here
+			//printf("\nsubshell = %d", subshell);
+            //if (subshell == 0){
+				if(execvp(args[place], args + place) < 0 ){
                     perror(*args);
                     exit(EXIT_FAILURE);
-            }
+				}
+			//}else{
+			//	char *const environ[0];
+			//	print_array(args);
+			//	if(execve("/bin/bash", args, environ) < 0 ){
+            //        perror(*args);
+            //       exit(EXIT_FAILURE);
+			//	}
+			//}
         }
         else if(child_id < 0){
             perror("error");
             exit(EXIT_FAILURE);
         }
-
+		
         j+=2;
     }
 
@@ -348,6 +353,7 @@ int handle_symbols(char **args, int block,
 	       int input, char *input_filename,
 	       int output, char *output_filename, int append, int pipes) {
 	int skip_next = 0;
+	int subshell = 0;
 	int i;
 	int return_code;
 	int n = 0;
@@ -359,28 +365,29 @@ int handle_symbols(char **args, int block,
 	clear_array(new_args);
 
 	for(i = 0; args[i] != NULL; i++){
-		//printf("\ni = %d\n", i);
     	if(args[i][0] == '('){
 			printf("\ncase = %s", "(");
 			clear_array(new_args);
 			n = 0;
-	
+			subshell = 1;
+			
 		}else if(args[i][0] == ')'){
 			printf("\ncase = %s", ")");
 			if(skip_next == 0 && new_args[0] != NULL){
 				do_command(new_args, block, input, input_filename, 
-							output, output_filename, append);
+							output, output_filename, append, subshell);
 			}else{
 				skip_next = 0;
 			}
 			clear_array(new_args);
 			n = 0;
+			subshell = 0;
 			
 		}else if(args[i][0] == ';'){
 			printf("\ncase = %s", ";");
 			if(skip_next == 0 && new_args[0] != NULL){
 				do_command(new_args, block, input, input_filename, 
-							output, output_filename, append);
+							output, output_filename, append, subshell);
 			}else{
 				skip_next = 0;
 			}
@@ -391,17 +398,14 @@ int handle_symbols(char **args, int block,
 			printf("\ncase = %s", "&&");
             if(skip_next == 0 && new_args[0] != NULL){
 				return_code = do_command(new_args, block, input, input_filename, 
-							output, output_filename, append);
+							output, output_filename, append, subshell);
                 printf("\nreturncode = %d\n", return_code);
 			}else{
 				skip_next = 0;
 			}
 			clear_array(new_args);
 			n = 0;
-			
 			i = i + 1;
-			
-			
 			if (return_code != 0) {
 				skip_next = 1;
 			}else{
@@ -412,16 +416,14 @@ int handle_symbols(char **args, int block,
 			printf("\ncase = %s", "||");
 			if(skip_next == 0 && new_args[0] != NULL){
 				return_code = do_command(new_args, 1, input, input_filename, 
-							output, output_filename, append);
+							output, output_filename, append, subshell);
 				printf("return code: %d", return_code);
 			}else{
 				skip_next = 0;
 			}
 			clear_array(new_args);
 			n = 0;
-			
 			i = i + 1;
-			
             if (return_code != 0) {
 				skip_next = 0;
 			}else{
@@ -436,7 +438,7 @@ int handle_symbols(char **args, int block,
             if (args[i+1] == NULL){
 				if(skip_next == 0 && new_args[0] != NULL){
 					do_command(new_args, block, input, input_filename, 
-							output, output_filename, append);
+							output, output_filename, append, subshell);
 				}
 			}
 		}
