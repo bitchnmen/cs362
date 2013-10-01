@@ -36,6 +36,12 @@ main() {
   // Set up the signal handler
   //sigset(SIGCHLD, SIG_IGN);
   //sigaction (SIGCHLD, NULL, NULL);
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	signal(SIGTSTP, SIG_DFL);
+	signal(SIGTTIN, SIG_DFL);
+	signal(SIGTTOU, SIG_DFL);
+	signal(SIGCHLD, SIG_DFL);
 
   // Loop forever
   while(1) {
@@ -196,18 +202,9 @@ int do_command(char **args, int block,
 		}
 		
         if(child_id == 0) {
-            if(block){
-				setpgid(0, 0);
-			}
+            
 			/* Set the handling for job control signals back to the default.  */
-			signal(SIGINT, SIG_DFL);
-			signal(SIGQUIT, SIG_DFL);
-			signal(SIGTSTP, SIG_DFL);
-			signal(SIGTTIN, SIG_DFL);
-			signal(SIGTTOU, SIG_DFL);
-			//signal(SIGCHLD, SIG_DFL);
 			
-		
 			dup2 (0, STDIN_FILENO);
 			dup2 (1, STDOUT_FILENO);	
 			dup2 (2, STDERR_FILENO);
@@ -262,10 +259,20 @@ int do_command(char **args, int block,
 			//	}
 			//}
         }
-        else if(child_id < 0){
-            perror("error");
+        else if(child_id > 0){
+            
+			
+			
+        } else {
+			perror("error");
             exit(EXIT_FAILURE);
-        }
+		}
+		
+		if (block) {
+			waitpid(-1, NULL, WNOHANG);
+		} else {
+			setpgid(child_id, 0);
+		}
 		
         j+=2;
     }
