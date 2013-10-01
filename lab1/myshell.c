@@ -9,17 +9,7 @@
 #include "myshell.h"
 
 extern char **get_line();
-
-/*
- * Handle exit signals from child processes
- */
-void sig_handler(int signal) {
-//int status;
-//int result = wait(&status);
-
-//printf("Wait returned %d\n", result);
-	while(waitpid(-1, NULL, WNOHANG) > 0);
-}      
+    
 /*
  * The main shell function
  */ 
@@ -91,7 +81,6 @@ main() {
       break;
     }
 	
-	print_array(args);
 	printf("\n\n");
 	
 	handle_symbols(args, block, input, input_filename, 
@@ -176,7 +165,6 @@ int do_command(char **args, int block,
     while (args[k] != NULL){
         if(!strcmp(args[k], "|")){
             args[k] = NULL;
-            // printf("args[%d] is now NULL", k);
             commandStarts[s] = k+1;
             s++;
         }
@@ -244,18 +232,28 @@ int do_command(char **args, int block,
             }
 
             // The commands are executed here
-			//printf("\nsubshell = %d", subshell);
             //if (subshell == 0){
 				if(execvp(args[place], args + place) < 0 ){
                     perror(*args);
                     exit(EXIT_FAILURE);
 				}
-			//}else{
-			//	char *const environ[0];
-			//	print_array(args);
-			//	if(execve("/bin/bash", args, environ) < 0 ){
-            //        perror(*args);
-            //       exit(EXIT_FAILURE);
+			//}else{ //attempt at subshells that doesn't work************
+			//	char **enter_sub = malloc(1);
+			//	char **exit_sub = malloc(1);
+			//	enter_sub[0] = "./myshell";
+			//	exit_sub[0] = "exit";
+			//	
+			//	if(execvp(enter_sub[0], enter_sub + 0) < 0 ){
+            //      perror(*enter_sub);
+            //      exit(EXIT_FAILURE);
+			//	}
+			//	if(execvp(args[place], args + place) < 0 ){
+            //      perror(*args);
+            //      exit(EXIT_FAILURE);
+			//	}
+			//	if(execvp(exit_sub[0], exit_sub + 0) < 0 ){
+            //      perror(*exit_sub);
+            //      exit(EXIT_FAILURE);
 			//	}
 			//}
         }
@@ -281,8 +279,7 @@ int do_command(char **args, int block,
         close(pipefds[i]);
     }
 	
-	//maybe insert some stuff here for bg processes
-	 if(block) {
+	if(block) {
 		for(i = 0; i < pipes + 1; i++){
 			wait(&status);
 		}
@@ -327,78 +324,75 @@ int redirect_input(char **args, char **input_filename) {
  * Check for output redirection
  */
 int redirect_output(char **args, char **output_filename, int *append) {
-  int i;
-  int j;
-  *append = 0;
+	int i;
+	int j;
+	*append = 0;
 
-  for(i = 0; args[i] != NULL; i++) {
-
-    // Look for the >
-    if(args[i][0] == '>' && args[i+1][0] != '>'){
-      free(args[i]);
-
-      // Get the filename 
-      if(args[i+1] != NULL) {
-	*output_filename = args[i+1];
-      } else {
-	return -1;
-      }
-    
-      // Adjust the rest of the arguments in the array
-      for(j = i; args[j-1] != NULL; j++) {
-	args[j] = args[j+2];
-      }
-
-      return 1;
-
-    } else if (args[i][0] == '>' && args[i+1][0] == '>'){
-      *append = 1;
-      free(args[i]);
-      free(args[i+1]);	
-      
-      // Get the filename 
-      if(args[i+2] != NULL) {
-	    *output_filename = args[i+2];
-      } else {
-	return -1;
-      }
-
-      // Adjust the rest of the arguments in the array
-      for(j = i; args[j-1] != NULL; j++) {
-	    args[j] = args[j+3];
-      }
-
-      return 1;
-    }
-  } 
-  
+	for(i = 0; args[i] != NULL; i++) {
+		// Look for the >
+		if(args[i][0] == '>' && args[i+1][0] != '>'){
+			free(args[i]);
+			// Get the filename 
+			if(args[i+1] != NULL) {
+				*output_filename = args[i+1];
+			} else {
+				return -1;
+			}
+			// Adjust the rest of the arguments in the array
+			for(j = i; args[j-1] != NULL; j++) {
+				args[j] = args[j+2];
+			}
+			return 1;
+		} else if (args[i][0] == '>' && args[i+1][0] == '>'){
+			*append = 1;
+			free(args[i]);
+			free(args[i+1]);	
+			// Get the filename 
+			if(args[i+2] != NULL) {
+				*output_filename = args[i+2];
+			} else {
+				return -1;
+			}
+			// Adjust the rest of the arguments in the array
+			for(j = i; args[j-1] != NULL; j++) {
+				args[j] = args[j+3];
+			}
+			return 1;
+		}
+	} 
   return 0;
 }
 
+/*
+ * Method to handle symbols listed in the write up.
+ */
 int handle_symbols(char **args, int block,
 	       int input, char *input_filename,
 	       int output, char *output_filename, int append, int pipes) {
+	
 	int skip_next = 0;
 	int subshell = 0;
 	int i;
 	int return_code;
 	int n = 0;
-	    int z = 0;
+	int z = 0;
+	
+	//Baller way of setting up an empty array because I don't really know c.
+	//(Hopefully this wont have memory leaks although my brain says it will.)
 	char *new_args[20];
 	for(i = 0; i < sizeof(args); i++){
 		new_args[i] = NULL;
 	}
 	clear_array(new_args);
 
+	//loop for each case
 	for(i = 0; args[i] != NULL; i++){
-    	if(args[i][0] == '('){
-			printf("\ncase = %s", "(");
+		if(args[i][0] == '('){ //Case: "("
 			clear_array(new_args);
 			n = 0;
 			subshell = 1;
 			
-		}else if(args[i][0] == ')'){
-			printf("\ncase = %s", ")");
+		}else if(args[i][0] == ')'){ //Case: ")"
 			if(skip_next == 0 && new_args[0] != NULL){
 				do_command(new_args, block, input, input_filename, 
 							output, output_filename, append, subshell);
@@ -409,8 +403,7 @@ int handle_symbols(char **args, int block,
 			n = 0;
 			subshell = 0;
 			
-		}else if(args[i][0] == ';'){
-			printf("\ncase = %s", ";");
+		}else if(args[i][0] == ';'){ //Case: ";"
 			if(skip_next == 0 && new_args[0] != NULL){
 				do_command(new_args, block, input, input_filename, 
 							output, output_filename, append, subshell);
@@ -420,8 +413,7 @@ int handle_symbols(char **args, int block,
 			clear_array(new_args);
 			n = 0;
 
-		}else if(args[i][0] == '&' && args[i+1][0] == '&'){
-			printf("\ncase = %s", "&&");
+		}else if(args[i][0] == '&' && args[i+1][0] == '&'){ //Case: "&&"
             if(skip_next == 0 && new_args[0] != NULL){
 				return_code = do_command(new_args, block, input, input_filename, 
 							output, output_filename, append, subshell);
@@ -436,9 +428,8 @@ int handle_symbols(char **args, int block,
 			}else{
 				skip_next = 0;
 			}
-			//printf("\nskip_next = %d\n", skip_next);
-		}else if(args[i][0] == '|' && args[i+1][0] == '|'){
-			printf("\ncase = %s", "||");
+			
+		}else if(args[i][0] == '|' && args[i+1][0] == '|'){ //Case: "||"
 			if(skip_next == 0 && new_args[0] != NULL){
 				return_code = do_command(new_args, 1, input, input_filename, 
 							output, output_filename, append, subshell);
@@ -453,13 +444,12 @@ int handle_symbols(char **args, int block,
 			}else{
 				skip_next = 1;
 			}
-			//printf("\nskip_next = %d\n", skip_next);
-		}else{
-			//printf("\nadd to new_args = %s\n", args[i]);
+
+		}else{ //Case: "Not a symbol. Add to temp array."
 			new_args[n] = args[i];
 			n = n + 1;
              
-            if (args[i+1] == NULL){
+            if (args[i+1] == NULL){ //end of full command. execute last part if present.
 				if(skip_next == 0 && new_args[0] != NULL){
 					do_command(new_args, block, input, input_filename, 
 							output, output_filename, append, subshell);
@@ -469,6 +459,9 @@ int handle_symbols(char **args, int block,
 	}
 }
 
+/*
+ * Method to clear the passed in array.
+ */
 clear_array(char **new_args){
 	int i;
 	for(i = 0; new_args[i] != NULL; i++){
@@ -476,6 +469,9 @@ clear_array(char **new_args){
 	}	
 }
 
+/*
+ * Method to print the passed in array.
+ */
 print_array(char **args){
     //printf("\n***************************\n");
 	//int z;
