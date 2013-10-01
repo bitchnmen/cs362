@@ -23,15 +23,6 @@ main() {
   char *output_filename;
   char *input_filename;
   int append;
-  // Set up the signal handler
-  //sigset(SIGCHLD, SIG_IGN);
-  //sigaction (SIGCHLD, NULL, NULL);
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
-	signal(SIGTSTP, SIG_DFL);
-	signal(SIGTTIN, SIG_DFL);
-	signal(SIGTTOU, SIG_DFL);
-	signal(SIGCHLD, SIG_DFL);
 
   // Loop forever
   while(1) {
@@ -256,16 +247,14 @@ int do_command(char **args, int block,
             //      exit(EXIT_FAILURE);
 			//	}
 			//}
-        }
-        else if(child_id > 0){
-            
-			
-			
-        } else {
+        } else if (child_id == -1){
 			perror("error");
             exit(EXIT_FAILURE);
 		}
 		
+		//If there is an ampersand then we force the child processes to wait.
+		//We don't care about any info the child, and we want the processes to return if
+		//no child has exited. "waitpid" handles zombie processes.
 		if (block) {
 			waitpid(-1, NULL, WNOHANG);
 		} else {
@@ -279,12 +268,11 @@ int do_command(char **args, int block,
         close(pipefds[i]);
     }
 	
-	if(block) {
+	if(block){
 		for(i = 0; i < pipes + 1; i++){
 			wait(&status);
 		}
-	}
-    
+    }
 	return status;
 }
 
