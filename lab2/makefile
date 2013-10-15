@@ -4,10 +4,11 @@ LIBS=-lpthread
 FLIBS=-lfl
 
 all:
-	flex lex.c
-	gcc -g -c lex.yy.c myshell.c
-	gcc -g -Wall -o myshell myshell.o lex.yy.o -lfl 
+	g++ -c server.cc
+	g++ -c client.cc
+	g++ -c prime.cc
+	g++ -o server server.o
+	g++ -o client client.o	
 clean:
 	rm -f *.o *.*~ run
-	rm -f *.yy.c *.*~ run
 	
