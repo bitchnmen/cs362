@@ -12,4 +12,4 @@ all:
 		
 clean:
 	rm -f *.o *.*~ run
-	
+	rm -f temp.txt
