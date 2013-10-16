@@ -1,3 +1,7 @@
+
+#include "prime.h"
+
+using namespace std;
 void sieve(int *isComposite, int maximum, int maxSqrt) {
     int m = isComposite[0];
     int currentPrime = m-1;
@@ -14,4 +18,9 @@ void sieve(int *isComposite, int maximum, int maxSqrt) {
             }
         }
     } 
+}
+
+void error(const char *msg){
+    perror(msg);
+    exit(1);
 }

@@ -1,8 +1,10 @@
 
 #include "prime.h"
 
+using namespace std;
 int main(int argc, char *argv[]){
-    int sockfd, newsockfd, portno; // listen on sock_fd, new connection on new_fd, port number
+    
+	int sockfd, newsockfd, portno; // listen on sock_fd, new connection on new_fd, port number
     socklen_t clilen;
 
     struct sockaddr_in serv_addr, cli_addr;  // my address information, connector's address information
