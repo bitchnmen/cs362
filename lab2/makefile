@@ -7,8 +7,9 @@ all:
 	g++ -c server.cc
 	g++ -c client.cc
 	g++ -c prime.cc
-	g++ -o server server.o
-	g++ -o client client.o	
+	g++ -o server server.o prime.o
+	g++ -o client client.o prime.o
+		
 clean:
 	rm -f *.o *.*~ run
 	
