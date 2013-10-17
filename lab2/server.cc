@@ -69,7 +69,7 @@ int main(int argc, char *argv[]){
     // are in the array, starting with 2 (the first prime)
     // which is held in isComposite[3]
     isComposite[0] = 3;
-
+	isComposite[2] = 1;
     // Run the sieve for each prime we come accross
     // until we reach the prime that is the square
     // root of the maximum (isComposite[2])
@@ -104,5 +104,8 @@ int main(int argc, char *argv[]){
             }
         }
     }
+	
+	printWholeArray(isComposite, maximum);
+	
     return 0;
 }

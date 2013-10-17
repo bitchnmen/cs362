@@ -72,6 +72,10 @@ int main(int argc, char *argv[]){
     }
 
     close(sockfd);
+	
+	writeFile(isComposite, maximum);
+	printWholeArray(isComposite, maximum);
+	
     return(0);
 }
 

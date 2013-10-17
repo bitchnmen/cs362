@@ -26,4 +26,8 @@ void sieve(int*, int, int);
 
 void error(const char*);
 
+void writeFile(int *primeList, int max);
+
+void printWholeArray(int *list, int max);
+
 #endif
