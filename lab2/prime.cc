@@ -13,7 +13,7 @@ void sieve(int *isComposite, int maximum, int maxSqrt) {
         //looking at (m) and mark them as composite (1)
         for (int k = currentPrime * currentPrime; k <= maximum; k += currentPrime){
             if(isComposite[k+1] == 0){
-                //cout << "Removing: " << k << endl;
+                cout << "Removing: " << k << endl;
                 isComposite[k+1] = 1;
             }
         }
@@ -47,3 +47,31 @@ void writeFile(int *primeList, int max) {
     
     myfile.close();
 }
+
+//////////////////////////////////////////////////
+
+/* bool sendAll(int socket, const void *data, ssize_t size) {
+    ssize_t sent = 0;
+    ssize_t just_sent;
+    while (sent < size) {
+        just_sent = send(socket, data, size - sent, 0);
+        if (just_sent < 0) {
+            return false;
+        }
+        sent += just_sent;
+    }
+    return true;
+}
+
+bool receiveAll(int socket, const void *data, ssize_t size) {
+    ssize_t received = 0;
+    ssize_t just_received;
+    while (received < size) {
+        just_received = recv(socket, data, size - received, 0);
+        if (just_received < 0) {
+            return false;
+        }
+        received += just_received;
+    }
+    return true;
+} */

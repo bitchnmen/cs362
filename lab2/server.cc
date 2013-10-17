@@ -78,7 +78,7 @@ int main(int argc, char *argv[]){
         // Unless it is the first time through
         // Receive from the client
         if(isComposite[0] > 3){
-            if(recv(newsockfd, isComposite, (maximum+1)* sizeof(int), 0) < 0){
+            if(read(newsockfd, isComposite, (maximum+1)* sizeof(int)) < 0){
                 perror("ERROR receiving from socket");
             }
         }

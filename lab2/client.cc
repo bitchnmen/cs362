@@ -51,7 +51,7 @@ int main(int argc, char *argv[]){
 
     while(isComposite[0] <= maxSqrt){
 
-        if(recv(sockfd, isComposite, (maximum+1)* sizeof(int), 0) < 0){
+        if(read(sockfd, isComposite, (maximum+1)* sizeof(int)) < 0){
             perror("ERROR receiving from socket");
         }
 
