@@ -21,34 +21,33 @@ void sieve(int *isComposite, int maximum, int maxSqrt) {
 }
 
 int sendAll(int socket_connection_fd, int *data, int max){
-	
-	printWholeArray(data, 100);
-	
+	//loop through array
 	for(int i = 0; i < max+1; i++){
+		//create a temp array to store single int
 		int *tempArray = new int[1];
-		
 		tempArray[0] = data[i]; 
-		
-		//cout << "Sending: " << tempArray[0] << endl;
+		//send individual int
 		if((send(socket_connection_fd, tempArray, sizeof(int), 0)) == -1) {
-			perror("send()");
+			error("sendAll()");
 			break;
 		}
+		//free the temp array from memory
 		free(tempArray);
 	}
 	return data[0];
 }
 
 int recvAll(int socket_connection_fd, int *data, int max){
-
+	//loop through array
 	for(int i = 0; i < max+1; i++){
+		//create a temp array to store single int
 		int *tempArray = new int[1];
-		
+		//send individual int
 		if((recv(socket_connection_fd, tempArray, sizeof(int), 0)) == -1) {
-			perror("recv()");
+			error("recvAll()");
 			break;
 		}
-		
+		//free the temp array from memory
 		data[i] = tempArray[0];
 		free(tempArray);
 	}
@@ -67,7 +66,7 @@ void writeFile(int *primeList, int max) {
     
     int count = 0;
     int i = 2;
-        
+    //write first 10 primes to file
     while (count < 10) {
         if (primeList[i+1] == 0) {
             fprintf (myfile, "%d\n",i);
@@ -80,9 +79,8 @@ void writeFile(int *primeList, int max) {
         
     count = 0;
 	int j = max-1;
-	
+	//write last 10 primes to file
     while (count < 10) {
-		cout << "j = " << j << endl;
         if (primeList[j+1] == 0) {
             fprintf (myfile, "%d\n",j);
             count++;
@@ -93,7 +91,8 @@ void writeFile(int *primeList, int max) {
 }
 
 void printWholeArray(int *list, int max) {
-    for (int i = 0; i < max; i++) {
+    //loop through array and print out primes
+	for (int i = 0; i < max; i++) {
         if(list[i+1] == 0){
             printf ("%d,",i);
         }

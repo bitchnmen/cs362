@@ -89,7 +89,6 @@ int main(int argc, char *argv[]){
 			
             // Find the next prime
             while(isComposite[isComposite[0]] == 1){
-				// cout << "possible prime " << isComposite[0] << "\n" << endl;
                 isComposite[0]++;
 			}		
             cout << "Doing next Sieve on: " << isComposite[0]-1 << endl;
@@ -99,6 +98,9 @@ int main(int argc, char *argv[]){
         sendAll(newsockfd, isComposite, maximum);
 		
     }
-		
+	
+	//write to file
+	writeFile(isComposite, maximum);
+	
     return 0;
 }

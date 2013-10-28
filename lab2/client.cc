@@ -66,11 +66,10 @@ int main(int argc, char *argv[]){
         sendAll(sockfd, isComposite, maximum);
 
     }
-
+	//close socket
     close(sockfd);
 	
-	cout << "isComposite[1999999] = " << isComposite[maximum-1] << endl;
-	
+	//write to file
 	writeFile(isComposite, maximum);
     return(0);
 }
