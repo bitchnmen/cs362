@@ -1,7 +1,6 @@
 
 #include "prime.h"
 
-using namespace std;
 int main(int argc, char *argv[]){
     
 	int sockfd, newsockfd, portno; // listen on sock_fd, new connection on new_fd, port number
@@ -74,11 +73,14 @@ int main(int argc, char *argv[]){
     // until we reach the prime that is the square
     // root of the maximum (isComposite[2])
     while(isComposite[0] <= maxSqrt){
+        
+        vector<int> removeList;
+        if(isComposite[0] <= 3){removeList.push_back(isComposite[0]);}
 
         // Unless it is the first time through
         // Receive from the client
         if(isComposite[0] > 3){
-            if(read(newsockfd, isComposite, (maximum+1)* sizeof(int)) < 0){
+            if(read(newsockfd, &removeList[0], removeList.size()) < 0){
                 perror("ERROR receiving from socket");
             }
         }
@@ -86,24 +88,35 @@ int main(int argc, char *argv[]){
         // If we're not done:
         if(isComposite[0] <= maxSqrt){
             // Sieve the range
-            sieve(isComposite, maximum, maxSqrt);
+            removeList = sieve(isComposite, maximum, maxSqrt);
+			
+			cout << removeList[0] << "- removeList[0]" << endl;
+			
+            isComposite[0] = removeList[0];
             isComposite[0]++;
-
+			
+			updateArray(isComposite,maximum,removeList);
+								
             // Find the next prime
             while(isComposite[isComposite[0]] == 1){
                 isComposite[0]++;
             }
+
+			cout << removeList.size() << " size of removeList" << endl;
+
+            removeList[0] = isComposite[0];
             cout << "Doing next Sieve on: " << isComposite[0]-1 << endl;
-
         }
 
-        // If we're still not done:
-        if(send(newsockfd, isComposite, (maximum+1)* sizeof(int), 0) < 0){
-            if(send(newsockfd, isComposite, maximum+1500, 0) < 0){
-                perror("ERROR sending to socket");
-            }
-        }
-    }
+        // If we're still not done
+		int errorcode = send(newsockfd, &removeList[0], removeList.size(), 0);
+		cout << errorcode << ": errorcode" << endl;
+//if(send(newsockfd, &removeList[0], removeList.size(), 0) < 0){
+           // if(send(newsockfd, isComposite, maximum+1500, 0) < 0){
+             //   perror("ERROR sending to socket");
+           //}
+       // }
+}
 	
 	printWholeArray(isComposite, maximum);
 	

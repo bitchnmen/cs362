@@ -16,18 +16,23 @@
 #include <cmath>
 #include <pthread.h>
 #include <netdb.h>
+#include <vector>
+
+using namespace std;
 
 /* client.cc */
 
 /* server.cc */
 
 /* prime.cc */
-void sieve(int*, int, int);
+vector<int> sieve(int*, int, int);
 
 void error(const char*);
 
 void writeFile(int *primeList, int max);
 
 void printWholeArray(int *list, int max);
+
+void updateArray(int *primeList, int maximum, vector<int> removeList);
 
 #endif

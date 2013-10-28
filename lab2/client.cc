@@ -1,7 +1,6 @@
 
 #include "prime.h"
 
-using namespace std;
 int main(int argc, char *argv[]){
 
     int sockfd, portno, n;
@@ -51,21 +50,32 @@ int main(int argc, char *argv[]){
 
     while(isComposite[0] <= maxSqrt){
 
-        if(read(sockfd, isComposite, (maximum+1)* sizeof(int)) < 0){
+        vector<int> removeList;
+		if(isComposite[0] == 3){removeList.push_back(isComposite[0]);}
+
+        if(read(sockfd, &removeList[0], removeList.size()) < 0){
             perror("ERROR receiving from socket");
         }
 
+		//for (int i =0; i < removeList.size(); i++) {
+		//	cout << removeList[i] << " - in RemoveList" << endl;
+		//}
+		exit(1);
+		
         // Sieve the range
-        sieve(isComposite, maximum, maxSqrt);
+        removeList = sieve(isComposite, maximum, maxSqrt);
         isComposite[0]++;
-
+        
+        updateArray(isComposite,maximum,removeList);
+        
         // Find the next prime
         while(isComposite[isComposite[0]] == 1){
             isComposite[0]++;
         }
+        
         cout << "Doing next Sieve on: " << isComposite[0]-1 << endl;
 
-        if(send(sockfd, isComposite, (maximum+1)* sizeof(int), 0) < 0){
+        if(send(sockfd, &removeList[0], removeList.size(), 0) < 0){
             perror("ERROR sending to socket");
         }
 

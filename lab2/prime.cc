@@ -1,11 +1,12 @@
 
 #include "prime.h"
 
-using namespace std;
-void sieve(int *isComposite, int maximum, int maxSqrt) {
+vector<int> sieve(int *isComposite, int maximum, int maxSqrt) {
     int m = isComposite[0];
     int currentPrime = m-1;
-
+	vector<int> removeList;
+	removeList.push_back(m);
+	
     //Loop through "maxSqrt" times through the array
     if(m <= maxSqrt){
            
@@ -14,10 +15,11 @@ void sieve(int *isComposite, int maximum, int maxSqrt) {
         for (int k = currentPrime * currentPrime; k <= maximum; k += currentPrime){
             if(isComposite[k+1] == 0){
                 cout << "Removing: " << k << endl;
-                isComposite[k+1] = 1;
+                removeList.push_back(k);
             }
         }
-    } 
+    }
+    return removeList;
 }
 
 void error(const char *msg){
@@ -60,6 +62,18 @@ void printWholeArray(int *list, int max) {
 			printf ("%d\n",i);
 		}
     }
+}
+
+void updateArray(int *primeList, int maximum, vector<int> removeList) {
+	//cout << removeList.size() << " size of removeList" << endl;
+	
+    for(int i = 1; i < removeList.size(); i++) {
+		//cout << removeList[i] << " - removelist[i]" << endl;
+		if(primeList[removeList[i]+1] == 0) {
+			primeList[removeList[i]+1] = 1;
+		}
+		//cout << primeList[removeList[i]+1] << " - primelist[removlist[i]+1]" << endl;
+	}
 }
 
 //////////////////////////////////////////////////
