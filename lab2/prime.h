@@ -25,4 +25,12 @@ void sieve(int*, int, int);
 
 void error(const char*);
 
+int sendAll(int, int*, int);
+
+int recvAll(int, int*, int);
+
+void writeFile(int* , int);
+
+void printWholeArray(int*, int);
+
 #endif

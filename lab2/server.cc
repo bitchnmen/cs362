@@ -78,9 +78,7 @@ int main(int argc, char *argv[]){
         // Unless it is the first time through
         // Receive from the client
         if(isComposite[0] > 3){
-            if(recv(newsockfd, isComposite, (maximum+1)* sizeof(int), 0) < 0){
-                perror("ERROR receiving from socket");
-            }
+            recvAll(newsockfd, isComposite, maximum);
         }
 
         // If we're not done:
@@ -88,21 +86,19 @@ int main(int argc, char *argv[]){
             // Sieve the range
             sieve(isComposite, maximum, maxSqrt);
             isComposite[0]++;
-
+			
             // Find the next prime
             while(isComposite[isComposite[0]] == 1){
+				// cout << "possible prime " << isComposite[0] << "\n" << endl;
                 isComposite[0]++;
-            }
+			}		
             cout << "Doing next Sieve on: " << isComposite[0]-1 << endl;
-
         }
 
         // If we're still not done:
-        if(send(newsockfd, isComposite, (maximum+1)* sizeof(int), 0) < 0){
-            if(send(newsockfd, isComposite, maximum+1500, 0) < 0){
-                perror("ERROR sending to socket");
-            }
-        }
+        sendAll(newsockfd, isComposite, maximum);
+		
     }
+		
     return 0;
 }

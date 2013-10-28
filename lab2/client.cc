@@ -51,9 +51,7 @@ int main(int argc, char *argv[]){
 
     while(isComposite[0] <= maxSqrt){
 
-        if(recv(sockfd, isComposite, (maximum+1)* sizeof(int), 0) < 0){
-            perror("ERROR receiving from socket");
-        }
+		recvAll(sockfd, isComposite, maximum);
 
         // Sieve the range
         sieve(isComposite, maximum, maxSqrt);
@@ -65,12 +63,14 @@ int main(int argc, char *argv[]){
         }
         cout << "Doing next Sieve on: " << isComposite[0]-1 << endl;
 
-        if(send(sockfd, isComposite, (maximum+1)* sizeof(int), 0) < 0){
-            perror("ERROR sending to socket");
-        }
+        sendAll(sockfd, isComposite, maximum);
 
     }
 
     close(sockfd);
+	
+	cout << "isComposite[1999999] = " << isComposite[maximum-1] << endl;
+	
+	writeFile(isComposite, maximum);
     return(0);
 }
