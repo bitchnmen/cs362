@@ -6,6 +6,8 @@ void sieve(int *isComposite, int maximum, int maxSqrt) {
     int m = isComposite[0];
     int currentPrime = m-1;
 
+	//printWholeArray(isComposite, maximum);
+	
     //Loop through "maxSqrt" times through the array
     if(m <= maxSqrt){
            
@@ -20,6 +22,47 @@ void sieve(int *isComposite, int maximum, int maxSqrt) {
     } 
 }
 
+/* int sendAll(int socket_connection_fd, int *data, int max){
+	int sent = 0;
+    int just_sent;
+    
+	while (sent < max+1) {
+		int *tempArray = new int[1];
+
+		if((max+1 - sent) < 1){
+			tempArray[0] = max+1 - sent;
+		}else{
+			tempArray[0] = 1;
+		}
+		just_sent = send(socket_connection_fd, tempArray, sizeof(int), 0);
+        just_sent = send(socket_connection_fd, data + sent, tempArray[0] * sizeof(int), 0);
+        if (just_sent < 0) {
+            return 0;
+        }
+        sent += just_sent;
+		free(tempArray);
+    }
+    return 1;
+}
+
+int recvAll(int socket_connection_fd, int *data, int max){
+	int received = 0;
+    int just_received;
+	
+	while (received < max+1) {
+	int *tempArray = new int[1];
+		just_received = recv(socket_connection_fd, tempArray, sizeof(int), 0);
+		just_received = recv(socket_connection_fd, data + received, tempArray[0] * sizeof(int), 0);
+        if (just_received < 0) {
+            return 0;
+        }
+        received += just_received;
+		free(tempArray);
+    }
+    return 1;
+}
+ */
+ 
 int sendAll(int socket_connection_fd, int *data, int max){
 	//loop through array
 	for(int i = 0; i < max+1; i++){
