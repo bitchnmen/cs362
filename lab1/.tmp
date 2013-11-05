@@ -1,0 +1,13 @@
+a.out
+foo
+fooa
+lex.c
+lex.yy.c
+lex.yy.o
+makefile
+myshell
+myshell.c
+myshell.h
+myshell.o
+test.c
+testfile
