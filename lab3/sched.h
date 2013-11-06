@@ -1,4 +1,5 @@
-#define PRIME_H
+#ifndef SCHED_H
+#define SCHED_H
 
 #include <iostream>
 #include <stdbool.h>
@@ -10,9 +11,29 @@
 #include <pthread.h>
 #include <fstream>
 #include <sstream>
+#include <vector>
+
+using namespace std;
 
 int mfqs();
 int rts();
 int hs();
 
-using namespace std;
+/* Process class */
+class Process {
+    int p_id, burst, arrival, priority, deadline, io;
+    public:
+		Process(int, int, int, int, int, int);
+		int get_p_id();
+		int get_burst();
+		int get_arrival();
+		int get_priority();
+		int get_deadline();
+		int get_io();		
+};
+
+/* Input */
+vector<Process> fileIO();
+void filterProcesses(vector<Process>);
+
+#endif

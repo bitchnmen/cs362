@@ -1,15 +1,14 @@
 #include "sched.h"
 
-
-vector<int[]> getProcesses(){
-    vector<int[]> processes;
+vector<Process> getProcesses(){
+    vector<Process> processes;
     processes = fileIO();
     filterProcesses(processes);
     return processes;
 }
 
-vector<int[]> fileIO() {
-    vector<int[]> processes;
+vector<Process> fileIO() {
+    vector<Process> processes;
     ifstream infile("testfile");
     string line;
     while(getline(infile, line)) {
@@ -17,13 +16,12 @@ vector<int[]> fileIO() {
         int a, b, c, d, e, f;
         if (!(iss >> a >> b >> c >> d >> e >> f)) {break;}
 
-        int[] params = {a, b, c, d, e, f};
-        process.push_back(params);
+        Process p (a, b, c, d, e, f);
+        processes.push_back(p);
     }
 
 }
 
-void filterProcesses(vector<int[]> processes) {
-
+void filterProcesses(vector<Process> processes) {
 
 }
