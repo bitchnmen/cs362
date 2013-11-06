@@ -15,15 +15,17 @@
 
 using namespace std;
 
-int mfqs();
-int rts();
-int hs();
-
 /* Process class */
 class Process {
-    int p_id, burst, arrival, priority, deadline, io;
+    private:
+		int p_id;
+		int burst;
+		int arrival;
+		int priority;
+		int deadline;
+		int io;
     public:
-		Process(int, int, int, int, int, int);
+        Process(int, int, int, int, int, int);
 		int get_p_id();
 		int get_burst();
 		int get_arrival();
@@ -32,8 +34,13 @@ class Process {
 		int get_io();		
 };
 
+int mfqs();
+int rts();
+int hs();
+
 /* Input */
 vector<Process> fileIO();
 void filterProcesses(vector<Process>);
+vector<Process> getProcesses();
 
 #endif
