@@ -22,10 +22,15 @@ int mfqs(){
         cout << "\nError: Invaild Time Quantum Input";
         exit(1);
     }
-
-    //vector<Process> processes = getProcesses();
+	
+	//getProcesses();
+	int numLines;
+	
+    Process* processes(getProcesses(&numLines));
+	
+	cout << "numLines: " << numLines << endl;
+	
+	print_in_file(processes, &numLines);
+	
     
-    
-
-
 }

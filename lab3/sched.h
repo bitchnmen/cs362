@@ -25,13 +25,16 @@ class Process {
 		int deadline;
 		int io;
     public:
+		Process();
         Process(int, int, int, int, int, int);
+		void set_values(int,int,int,int,int,int);
 		int get_p_id();
 		int get_burst();
 		int get_arrival();
 		int get_priority();
 		int get_deadline();
-		int get_io();		
+		int get_io();
+		void to_string();
 };
 
 int mfqs();
@@ -39,8 +42,7 @@ int rts();
 int hs();
 
 /* Input */
-vector<Process> fileIO();
-void filterProcesses(vector<Process>);
-vector<Process> getProcesses();
+Process* getProcesses(int*);
+void print_in_file(Process*, int*);
 
 #endif
