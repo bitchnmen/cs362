@@ -4,7 +4,7 @@ Process::Process (int p_ida, int bursta, int arrivala, int prioritya, int deadli
     p_id = p_ida;
 	burst = bursta;
 	arrival = arrivala;
-	priorityp = prioritya;
+	priority = prioritya;
 	deadline = deadlinea; 
 	io = ioa;
 }

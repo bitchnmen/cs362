@@ -10,7 +10,8 @@ all:
 	g++ -c rts.cc
 	g++ -c mfqs.cc
 	g++ -c stats.cc
-	g++ -o sched sched.o input.o hs.o rts.o mfqs.o stats.o
+	g++ -c process.cc
+	g++ -o sched sched.o input.o hs.o rts.o mfqs.o stats.o process.o
 		
 clean:
 	rm -f *.o *.*~ run

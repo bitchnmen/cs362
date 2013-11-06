@@ -23,7 +23,7 @@ int mfqs(){
         exit(1);
     }
 
-    vector<Process> processes = getProcesses();
+    //vector<Process> processes = getProcesses();
     
     
 
