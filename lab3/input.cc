@@ -16,12 +16,13 @@ vector<Process> fileIO() {
         int a, b, c, d, e, f;
         if (!(iss >> a >> b >> c >> d >> e >> f)) {break;}
 
-        Process p (a, b, c, d, e, f);
+        Process *p;
+		p = new Process(a, b, c, d, e, f);
         processes.push_back(p);
     }
 
 }
 
-void filterProcesses(vector<Process> processes) {
+void filterProcesses(vector<Process>& processes) {
 
 }
