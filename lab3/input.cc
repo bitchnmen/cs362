@@ -22,8 +22,17 @@ Process* getProcesses(int *numLines){
         stringstream ss(line);
         int a, b, c, d, e, f;
         if (!(ss >> a >> b >> c >> d >> e >> f)) {break;}
-        processes[count].set_values(a, b, c, d, e, f);
-        count++;
+        
+		cout << "a: " << a << endl;
+		cout << "count: " << count << endl;
+		
+		if (a == count + 1 && b > 0 && c >= 0 && d > 0 && e > 0 && f >= 0) {
+			processes[count].set_values(a, b, c, d, e, f);
+			
+		} else {
+			--*numLines;
+		}
+		count++;
     }
 
     /* filter the array here, remove bad timings */
