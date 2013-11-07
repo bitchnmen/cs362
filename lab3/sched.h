@@ -24,16 +24,22 @@ class Process {
 		int priority;
 		int deadline;
 		int io;
+		int age;
+		int level;
     public:
 		Process();
         Process(int, int, int, int, int, int);
 		void set_values(int,int,int,int,int,int);
-		int get_p_id();
-		int get_burst();
-		int get_arrival();
-		int get_priority();
-		int get_deadline();
-		int get_io();
+		int get_p_id() {return p_id;}
+		int get_burst() {return burst;}
+		int get_arrival() {return arrival;}
+		int get_priority() {return priority;}
+		int get_deadline() {return deadline;}
+		int get_io() {return io;}
+		void set_burst(int _burst) {burst = _burst;}
+		void set_priority(int _priority) {priority = _priority;}
+		void set_age(int _age) {age = _age;}
+		void set_level(int _level) {level = _level;}
 		void to_string();
 };
 
