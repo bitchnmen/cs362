@@ -31,6 +31,4 @@ int mfqs(){
 	cout << "numLines: " << numLines << endl;
 	
 	print_in_file(processes, &numLines);
-	
-    
 }

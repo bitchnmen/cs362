@@ -7,6 +7,8 @@ Process::Process() {
 	priority = -1;
 	deadline = -1; 
 	io = -1;
+	level = -1;
+	age = -1;
 }
 
 Process::Process (int p_ida, int bursta, int arrivala, int prioritya, int deadlinea, int ioa) {
@@ -16,6 +18,7 @@ Process::Process (int p_ida, int bursta, int arrivala, int prioritya, int deadli
 	priority = prioritya;
 	deadline = deadlinea; 
 	io = ioa;
+	level = 1;
 }
 
 void Process::set_values(int p_ida, int bursta, int arrivala, int prioritya, int deadlinea, int ioa) {
