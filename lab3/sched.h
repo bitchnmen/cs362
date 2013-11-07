@@ -36,6 +36,8 @@ class Process {
 		int get_priority() {return priority;}
 		int get_deadline() {return deadline;}
 		int get_io() {return io;}
+		int get_level() {return level;}
+		int get_age() {return age;}
 		void set_burst(int _burst) {burst = _burst;}
 		void set_priority(int _priority) {priority = _priority;}
 		void set_age(int _age) {age = _age;}

@@ -16,7 +16,7 @@ int mfqs(){
     cout << "\n";
     
     cout << "\nEnter the Maximum Age Time: ";
-    cin >> q;
+    cin >> maxage;
     cout << "\n";
 
     if(queues < 1 && queues > 5){
@@ -36,27 +36,43 @@ int mfqs(){
 
 	//getProcesses();
 	int numLines;
-	
+	bool loop = true;
     Process* processes(getProcesses(&numLines));
 	
 	cout << "numLines: " << numLines << endl;
 	
 	print_in_file(processes, &numLines);
 
-    for (int i = 0; i < numlines; i++){
-        if(processes[i].get_burst > 0){
+    
+    while (loop){ 
+        for (int i = 0; i < numLines; i++){
 
-            for(int j = 0; j < q; j++) { processes[i].set_burst(processes[i].get_burst() - 1) };
-            
-            if(processes[i].get_burst > 0){
-                if(processes[i].get_level < (queues * q)){
-                    processes[i].set_level(processes[i].get_level() + 1)
-                }else{
-                    if(processes.get_age()){
-                        processes[i].set_level(processes[i].get_level() - 1);
-                    }
-                } 
+            if(processes[i].get_burst() > 0){
+
+                for(int j = 0; j < q; j++) { processes[i].set_burst(processes[i].get_burst() - 1); }
+                
+                if(processes[i].get_burst() > 0){
+                    if(processes[i].get_level() < (queues * q)){
+                        processes[i].set_level(processes[i].get_level() + 1);
+                    }else{
+                        if(processes[i].get_age() >= maxage){
+                            processes[i].set_level(processes[i].get_level() - 1);
+                        }
+                    } 
+                }
             }
         }
+        
+        loop = false;
+        for(int k = 0; k < numLines; k++){
+            if(processes[k].get_burst() > 0){
+                loop = true;
+                break;
+            }
+        }
+
     }
+
+	print_in_file(processes, &numLines);
+
 }
