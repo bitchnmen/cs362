@@ -51,4 +51,8 @@ int hs();
 Process* getProcesses(int*);
 void print_in_file(Process*, int*);
 
+/* RTS */
+void hardRTS(Process*, int*);
+void softRTS(Process*, int*);
+
 #endif
