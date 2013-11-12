@@ -54,4 +54,5 @@ Process* getProcesses(int*);
 void print_in_file(Process*, int*);
 void print_stats(Process*, int*, int*, int*);
 
+void sort_by_arrival(Process*, int*);
 #endif

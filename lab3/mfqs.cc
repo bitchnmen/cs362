@@ -38,9 +38,13 @@ int mfqs(){
 	int numLines;
 	bool loop = true;
     Process* processes(getProcesses(&numLines));
-	
+    sort_by_arrival(processes, &numLines);	
+
+    int b;
+    cin >> b;
+
 	cout << "numLines: " << numLines << endl;
-	
+    	
 	print_in_file(processes, &numLines);
     
     int *start_times = new int[numLines];
@@ -56,9 +60,12 @@ int mfqs(){
     int clock = 0;
     
     while (loop){ 
-        for (int i = 0; i < numLines; i++){
+        cout << "\n__________________________________________________________" << endl;
+        for (int i = numLines-1; i >= 0; i--){
+            cout << "Clock: " << clock << endl;
+            print_stats(processes, start_times, end_times, &numLines);
             //check for arrival
-            if(processes[i].get_arrival() >= clock){
+            if(processes[i].get_arrival() <= clock){
                 //check if there is anything left to process
                 if(processes[i].get_burst() > 0){
                     //add start to array if not started yet
@@ -69,6 +76,10 @@ int mfqs(){
                     for(int j = 0; j < q; j++) {
                         processes[i].set_burst(processes[i].get_burst() - 1);
                         clock++;
+	                    cout << "Clock: " << clock << endl;
+                        if(processes[i].get_burst() == 0){
+                            break;
+                        }
                     }
                     //if processing is not done
                     if(processes[i].get_burst() > 0){
@@ -83,6 +94,7 @@ int mfqs(){
                         } 
                     
                     } else {
+                        //otherwise mark its done
                         if(end_times[i] == -1){
                             end_times[i] = clock;  
                         }
@@ -100,7 +112,8 @@ int mfqs(){
             }
         }
         clock++;
-	    print_stats(processes, start_times, end_times, &numLines);
+        int temp;
+        //cin >> temp;
     }
 
     cout << "FINISHED" << endl;
@@ -108,3 +121,36 @@ int mfqs(){
 	print_stats(processes, start_times, end_times, &numLines);
 
 }
+
+
+void sort_by_arrival(Process* processes, int* numLines){
+    int max_arrival = 0;
+	Process* processesNEW = new Process[*numLines];
+    
+    for(int i = 0; i < *numLines; i++){
+        if (processes[i].get_arrival() > max_arrival){
+            max_arrival = processes[i].get_arrival();
+        }
+    }
+    int count = 0;
+    for(int i = 0; i <= max_arrival; i++){
+        for(int j = 0; j < *numLines; j++){
+            if (processes[j].get_arrival() == i){
+                processesNEW[count] = processes[j];
+                count++;
+            }
+        }
+    }
+    
+    cout << "Processes:" << endl;
+	print_in_file(processes, numLines);
+    cout << "ProcessesNEW:" << endl;
+	print_in_file(processesNEW, numLines);
+    
+    processes = processesNEW;
+
+}
+
+
+
+
