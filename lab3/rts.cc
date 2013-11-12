@@ -27,6 +27,31 @@ int rts(){
 void hardRTS(Process* processes, int* numLines) {
 	print_in_file(processes, numLines);
 	
+	/*filter processes */
+	for(int i = 0; i < *numLines; i++) {
+		if (processes[i].get_deadline() < processes[i].get_burst() + processes[i].get_arrival()) {
+			processes[i].set_p_id(-1);
+		}
+	}
+	
+	int clock = 0;
+    bool loop = true;
+    while (loop){ 
+        
+		
+		
+		
+		loop = false;
+        for(int k = 0; k < *numLines; k++){
+            if(processes[k].get_burst() > 0){
+                loop = true;
+                break;
+            }
+        }
+        clock++;
+    }
+	
+	
 	
 	
 }

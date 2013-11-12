@@ -23,6 +23,8 @@ class Process {
 		int arrival;
 		int priority;
 		int deadline;
+		int start_time;
+		int end_time;
 		int io;
 		int age;
 		int level;
@@ -38,10 +40,15 @@ class Process {
 		int get_io() {return io;}
 		int get_level() {return level;}
 		int get_age() {return age;}
+		int get_start_time() {return start_time;}
+		int get_end_time() {return end_time;}
+		void set_p_id(int _p_id) {p_id = _p_id;}
 		void set_burst(int _burst) {burst = _burst;}
 		void set_priority(int _priority) {priority = _priority;}
 		void set_age(int _age) {age = _age;}
 		void set_level(int _level) {level = _level;}
+		void set_start_time(int _start_time) {start_time = _start_time;}
+		void set_end_time(int _end_time) {end_time = _end_time;}
 		void to_string();
 };
 
