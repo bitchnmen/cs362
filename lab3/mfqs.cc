@@ -42,25 +42,54 @@ int mfqs(){
 	cout << "numLines: " << numLines << endl;
 	
 	print_in_file(processes, &numLines);
+    
+    int *start_times = new int[numLines];
+    int *end_times = new int[numLines];
 
+    //initialize arrays
+    for(int i = 0; i < numLines; i++){
+        start_times[i] = -1;
+        end_times[i] = -1;
+    }
+
+
+    int clock = 0;
     
     while (loop){ 
         for (int i = 0; i < numLines; i++){
-
-            if(processes[i].get_burst() > 0){
-
-                for(int j = 0; j < q; j++) { processes[i].set_burst(processes[i].get_burst() - 1); }
-                
+            //check for arrival
+            if(processes[i].get_arrival() >= clock){
+                //check if there is anything left to process
                 if(processes[i].get_burst() > 0){
-                    if(processes[i].get_level() < (queues * q)){
-                        processes[i].set_level(processes[i].get_level() + 1);
-                    }else{
-                        if(processes[i].get_age() >= maxage){
+                    //add start to array if not started yet
+                    if(start_times[i] == -1){
+                        start_times[i] = clock;  
+                    }
+                    //execute for length of time quantum
+                    for(int j = 0; j < q; j++) {
+                        processes[i].set_burst(processes[i].get_burst() - 1);
+                        clock++;
+                    }
+                    //if processing is not done
+                    if(processes[i].get_burst() > 0){
+                        //adjust level of queue
+                        //if process is on the last queue and has run for >= to the maxage 
+                        if((processes[i].get_level() == (queues-1)) && (processes[i].get_age() >= maxage)){
+                            //move up a level
                             processes[i].set_level(processes[i].get_level() - 1);
+                        }else{
+                            //otherwise, move down a level
+                            processes[i].set_level(processes[i].get_level() + 1);
+                        } 
+                    
+                    } else {
+                        if(end_times[i] == -1){
+                            end_times[i] = clock;  
                         }
-                    } 
+                    }
+
                 }
-            }
+            }  
         }
         
         loop = false;
@@ -70,9 +99,12 @@ int mfqs(){
                 break;
             }
         }
-
+        clock++;
+	    print_stats(processes, start_times, end_times, &numLines);
     }
 
+    cout << "FINISHED" << endl;
 	print_in_file(processes, &numLines);
+	print_stats(processes, start_times, end_times, &numLines);
 
 }

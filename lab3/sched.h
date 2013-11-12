@@ -52,5 +52,6 @@ int hs();
 /* Input */
 Process* getProcesses(int*);
 void print_in_file(Process*, int*);
+void print_stats(Process*, int*, int*, int*);
 
 #endif

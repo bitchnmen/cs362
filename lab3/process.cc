@@ -7,7 +7,7 @@ Process::Process() {
 	priority = -1;
 	deadline = -1; 
 	io = -1;
-	level = -1;
+	level = 0;
 	age = -1;
 }
 
