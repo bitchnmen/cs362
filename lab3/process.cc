@@ -8,7 +8,7 @@ Process::Process() {
 	deadline = -1; 
 	io = -1;
 	level = 0;
-	age = -1;
+	age = 0;
 }
 
 Process::Process (int p_ida, int bursta, int arrivala, int prioritya, int deadlinea, int ioa) {
