@@ -37,3 +37,7 @@ void Process::set_values(int p_ida, int bursta, int arrivala, int prioritya, int
 void Process::to_string() {
 	cout << this->p_id << " " << this->burst << " " << this->arrival << " " << this->priority << " " << this->deadline << " " << this->io << "\n" << endl;
 }
+
+bool Process::is_done() {
+    return (this->burst == 0);
+}

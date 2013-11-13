@@ -51,6 +51,7 @@ class Process {
 		void set_start_time(int _start_time) {start_time = _start_time;}
 		void set_end_time(int _end_time) {end_time = _end_time;}
 		void to_string();
+        bool is_done();
 };
 
 int mfqs();

@@ -34,8 +34,8 @@ void hardRTS(Process* processes, int* numLines) {
 		}
 		processes[i].set_level(0);
 	}
-	process[0].set_level(1);
 	
+	int currentprocess
 	int clock = 0;
     bool loop = true;
     while (loop){ 
