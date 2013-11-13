@@ -12,6 +12,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <math.h> 
 
 using namespace std;
 
@@ -61,8 +62,12 @@ Process* getProcesses(int*);
 void print_in_file(Process*, int*);
 void print_stats(Process*, int*, int*, int*);
 
+/* MFQS */
+void sort_mfqs(Process*, int*);
+
 /* RTS */
 void hardRTS(Process*, int*);
 void softRTS(Process*, int*);
+void sort_mfqs(Process*, int*);
 
 #endif
