@@ -38,7 +38,7 @@ int mfqs(){
 	int numLines;
 	bool loop = true;
     Process* processes(getProcesses(&numLines));
-    sort_by_arrival(processes, &numLines);	
+    sort_mfqs(processes, &numLines);	
 
     int b;
     cin >> b;
@@ -59,11 +59,13 @@ int mfqs(){
 
     int clock = 0;
     
+	print_stats(processes, start_times, end_times, &numLines);
+    
     while (loop){ 
-        cout << "\n__________________________________________________________" << endl;
+        //cout << "\n__________________________________________________________" << endl;
         for (int i = numLines-1; i >= 0; i--){
-            cout << "Clock: " << clock << endl;
-            print_stats(processes, start_times, end_times, &numLines);
+            //cout << "Clock: " << clock << endl;
+            //print_stats(processes, start_times, end_times, &numLines);
             //check for arrival
             if(processes[i].get_arrival() <= clock){
                 //check if there is anything left to process
@@ -73,26 +75,47 @@ int mfqs(){
                         start_times[i] = clock;  
                     }
                     //execute for length of time quantum
-                    for(int j = 0; j < q; j++) {
-                        processes[i].set_burst(processes[i].get_burst() - 1);
-                        clock++;
-	                    cout << "Clock: " << clock << endl;
-                        if(processes[i].get_burst() == 0){
-                            break;
+                    if(!(processes[i].get_level() > (queues-1))){
+                        for(int j = 0; j < (pow(2,processes[i].get_level())*q); j++) {
+
+                            processes[i].set_burst(processes[i].get_burst() - 1);
+                            clock++;
+                            //cout << "Clock: " << clock << endl;
+                            if(processes[i].get_burst() == 0){
+                                break;
+                            }
+                        }
+                    } else {
+                        while(true) {
+                            processes[i].set_burst(processes[i].get_burst() - 1);
+                            clock++;
+                            //cout << "Clock: " << clock << endl;
+                            if(processes[i].get_burst() == 0){
+                                break;
+                            }
                         }
                     }
                     //if processing is not done
                     if(processes[i].get_burst() > 0){
                         //adjust level of queue
                         //if process is on the last queue and has run for >= to the maxage 
-                        if((processes[i].get_level() == (queues-1)) && (processes[i].get_age() >= maxage)){
-                            //move up a level
-                            processes[i].set_level(processes[i].get_level() - 1);
+                        int before =  processes[i].get_level();
+                        if((processes[i].get_level() == (queues-1))){
+                            cout << "in the last queue" << endl;
+                            if(processes[i].get_age() >= maxage){
+                                //move up a level
+                                cout << "moving up" << endl;
+                                processes[i].set_level(processes[i].get_level() - 1);
+                            }else{
+                                cout << "not moving up" << endl;
+                            }
                         }else{
                             //otherwise, move down a level
+                            cout << "moving down" << endl;
                             processes[i].set_level(processes[i].get_level() + 1);
                         } 
-                    
+                        int after =  processes[i].get_level();
+                        cout << "before: " << before << " - after: " << after << endl;
                     } else {
                         //otherwise mark its done
                         if(end_times[i] == -1){
@@ -123,7 +146,7 @@ int mfqs(){
 }
 
 
-void sort_by_arrival(Process* processes, int* numLines){
+void sort_mfqs(Process* processes, int* numLines){
     int max_arrival = 0;
 	Process* processesNEW = new Process[*numLines];
     
