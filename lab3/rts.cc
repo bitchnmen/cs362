@@ -32,7 +32,9 @@ void hardRTS(Process* processes, int* numLines) {
 		if (processes[i].get_deadline() < processes[i].get_burst() + processes[i].get_arrival()) {
 			processes[i].set_p_id(-1);
 		}
+		processes[i].set_level(0);
 	}
+	process[0].set_level(1);
 	
 	int clock = 0;
     bool loop = true;
