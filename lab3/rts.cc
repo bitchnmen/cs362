@@ -13,7 +13,7 @@ int rts(){
 	
 	int numLines;
 	Process* processes(getProcesses(&numLines));
-	
+/*	
 	if (rtsOption == 1) {
 		hardRTS(processes, &numLines);
 	} else if (rtsOption == 2) {
@@ -22,12 +22,13 @@ int rts(){
 		cout << "\nError on menu selection.\n";
 		exit(1);
 	}
+    */
 }
-
+/*
 void hardRTS(Process* processes, int* numLines) {
 	print_in_file(processes, numLines);
 	
-	/*filter processes */
+	// filter processes
 	for(int i = 0; i < *numLines; i++) {
 		if (processes[i].get_deadline() < processes[i].get_burst() + processes[i].get_arrival()) {
 			processes[i].set_p_id(-1);
@@ -43,14 +44,14 @@ void hardRTS(Process* processes, int* numLines) {
 		
 		
 		
-		loop = false;
-        for(int k = 0; k < *numLines; k++){
-            if(processes[k].get_burst() > 0){
-                loop = true;
-                break;
-            }
+    loop = false;
+    for(int k = 0; k < *numLines; k++){
+        if(processes[k].get_burst() > 0){
+            loop = true;
+            break;
         }
-        clock++;
+    }
+    clock++;
     }
 	
 	
@@ -92,3 +93,5 @@ void sort_rts(Process* processes, int* numLines){
     processes = processesNEW;
 
 }
+*/
+
