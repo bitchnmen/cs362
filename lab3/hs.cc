@@ -41,7 +41,7 @@ int hs(){
            cout << i<< ": " << endl;
            for(int j = 0; j < v.size(); j++){
                 Process p = v[j];
-                *p.to_string();
+                cout << p.get_priority() << endl;
            } 
            cout << "\n--DONE--\n\n" << endl;
     } 
