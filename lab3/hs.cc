@@ -24,7 +24,7 @@ int hs(){
     vector<Process> **map;
     map = new vector<Process>*[100]; 
     for(int i =0; i < 100; i++){
-        map.push_back(new vector<Process>);
+        //map.push_back(new vector<Process>);
     }
     
     // add proccesses to map to start
@@ -45,7 +45,7 @@ int hs(){
                 //Process p = processes[j];
                 //p.to_string();
                 cout << "p.id = " << processes[j].get_p_id() << endl;
-                v.push_back(processes[j]);
+                //v.push_back(processes[j]);
                 cout << processes[j].get_priority() << endl;
             } 
             cout << "\n--DONE--\n\n" << endl;

@@ -38,41 +38,40 @@ int mfqs(){
 	int numLines;
 	bool loop = true;
     Process* processes(getProcesses(&numLines));
+    
+    cout << "Started sorting" << endl;
     sort_mfqs(processes, &numLines);	
-
-    int b;
-    cin >> b;
 
 	cout << "numLines: " << numLines << endl;
     	
-	print_in_file(processes, &numLines);
+	//print_in_file(processes, &numLines);
     
-    int *start_times = new int[numLines];
-    int *end_times = new int[numLines];
+    //int *start_times = new int[numLines];
+    //int *end_times = new int[numLines];
 
     //initialize arrays
-    for(int i = 0; i < numLines; i++){
-        start_times[i] = -1;
-        end_times[i] = -1;
-    }
+    //for(int i = 0; i < numLines; i++){
+    //    start_times[i] = -1;
+    //    end_times[i] = -1;
+    //}
 
 
     int clock = 0;
     
-	print_stats(processes, start_times, end_times, &numLines);
+	//print_stats(processes, start_times, end_times, &numLines);
     
     while (loop){ 
-        cout << "\n__________________________________________________________" << endl;
+        //cout << "\n__________________________________________________________" << endl;
         for (int i = numLines-1; i >= 0; i--){
-            cout << "Clock: " << clock << endl;
-            print_stats(processes, start_times, end_times, &numLines);
+            //cout << "Clock: " << clock << endl;
+            //print_stats(processes, &numLines);
             //check for arrival
             if(processes[i].get_arrival() <= clock){
                 //check if there is anything left to process
                 if(processes[i].get_burst() > 0){
                     //add start to array if not started yet
-                    if(start_times[i] == -1){
-                        start_times[i] = clock;  
+                    if(processes[i].get_start_time() == -1){
+                        processes[i].set_start_time(clock);  
                     }
                     //execute for length of time quantum
                     if(!(processes[i].get_level() > (queues-1))){
@@ -91,28 +90,28 @@ int mfqs(){
                                     //      for >= to the maxage 
                                     int before =  processes[m].get_level();
                                     if((processes[m].get_level() == (queues-1))){
-                                        cout << "in the last queue" << endl;
+                                        //cout << "in the last queue" << endl;
                                         if(processes[m].get_age() >= maxage){
                                             //move up a level
-                                            cout << "moving up" << endl;
+                                            //cout << "moving up" << endl;
                                             processes[m].set_level(processes[m].get_level() - 1);
                                             processes[m].set_age(0);
                                         }else{
-                                            cout << "not moving up" << endl;
+                                            //cout << "not moving up" << endl;
                                             processes[m].set_age(processes[m].get_age()+1);
                                         }
                                         
                                     }else{
                                         //otherwise, move down a level
-                                        cout << "moving down" << endl;
+                                        //cout << "moving down" << endl;
                                         processes[m].set_level(processes[m].get_level() + 1);
                                     } 
                                     int after =  processes[m].get_level();
-                                    cout << "before: " << before << " - after: " << after << endl;
+                                    //cout << "before: " << before << " - after: " << after << endl;
                                 } else {
                                     //otherwise mark its done
-                                    if(end_times[m] == -1){
-                                        end_times[m] = clock;  
+                                    if(processes[m].get_end_time() == -1){
+                                       processes[m].set_end_time(clock);  
                                     }
                                 }
                             }
@@ -134,28 +133,28 @@ int mfqs(){
                                     //if process is on the last queue and has run for >= to the maxage 
                                     int before =  processes[m].get_level();
                                     if((processes[m].get_level() == (queues-1))){
-                                        cout << "in the last queue" << endl;
+                                        //cout << "in the last queue" << endl;
                                         if(processes[m].get_age() >= maxage){
                                             //move up a level
-                                            cout << "moving up" << endl;
+                                            //cout << "moving up" << endl;
                                             processes[m].set_level(processes[m].get_level() - 1);
                                             processes[m].set_age(0);
                                         }else{
-                                            cout << "not moving up" << endl;
+                                            //cout << "not moving up" << endl;
                                             processes[m].set_age(processes[m].get_age()+1);
                                         }
                                         
                                     }else{
                                         //otherwise, move down a level
-                                        cout << "moving down" << endl;
+                                        //cout << "moving down" << endl;
                                         processes[m].set_level(processes[m].get_level() + 1);
                                     } 
                                     int after =  processes[m].get_level();
-                                    cout << "before: " << before << " - after: " << after << endl;
+                                    //cout << "before: " << before << " - after: " << after << endl;
                                 } else {
                                     //otherwise mark its done
-                                    if(end_times[m] == -1){
-                                        end_times[m] = clock;  
+                                    if(processes[m].get_end_time() == -1){
+                                       processes[m].set_end_time(clock);  
                                     }
                                 }
                             }
@@ -179,13 +178,11 @@ int mfqs(){
                 break;
             }
         }
-        int temp;
-        cin >> temp;
     }
 
     cout << "FINISHED" << endl;
-	print_in_file(processes, &numLines);
-	print_stats(processes, start_times, end_times, &numLines);
+	//print_in_file(processes, &numLines);
+	print_stats(processes, &numLines);
 
 }
 
@@ -209,10 +206,10 @@ void sort_mfqs(Process* processes, int* numLines){
         }
     }
     
-    cout << "Processes:" << endl;
-	print_in_file(processes, numLines);
-    cout << "ProcessesNEW:" << endl;
-	print_in_file(processesNEW, numLines);
+    //cout << "Processes:" << endl;
+	//print_in_file(processes, numLines);
+    //cout << "ProcessesNEW:" << endl;
+	//print_in_file(processesNEW, numLines);
     
     processes = processesNEW;
 

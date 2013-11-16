@@ -4,7 +4,7 @@ Process* getProcesses(int *numLines){
 
 	/* Counting the number of lines */
 	*numLines = -1;
-	ifstream in("testfile");
+	ifstream in("testfileLARGE");
 	std::string unused;
 	while ( std::getline(in, unused) ) ++*numLines;
 	
@@ -12,7 +12,7 @@ Process* getProcesses(int *numLines){
 	Process* processes = new Process[*numLines];
 	
 	/* Opening a new file to create the Processes with */
-	ifstream infile("testfile");
+	ifstream infile("testfileLARGE");
     string line;
 	int count = 0;
 	getline(infile,line); //first line has words, we don't want those
@@ -23,8 +23,8 @@ Process* getProcesses(int *numLines){
         int a, b, c, d, e, f;
         if (!(ss >> a >> b >> c >> d >> e >> f)) {break;}
         
-		cout << "a: " << a << endl;
-		cout << "count: " << count << endl;
+		//cout << "a: " << a << endl;
+		//cout << "count: " << count << endl;
 		
 		if (a == count + 1 && b > 0 && c >= 0 && d > 0 && e > 0 && f >= 0) {
 			processes[count].set_values(a, b, c, d, e, f);
@@ -34,9 +34,12 @@ Process* getProcesses(int *numLines){
 		}
 		count++;
     }
+    
+
 
     /* filter the array here, remove bad timings */
 	/* :) */
+    cout << "done inputing" << endl;
 	
     return processes;
 }
