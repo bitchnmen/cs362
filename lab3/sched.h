@@ -65,14 +65,16 @@ int hs();
 /* Input */
 Process* getProcesses(int*);
 void print_in_file(Process*, int*);
+
+/* Stats */
 void print_stats(Process*, int*, int*, int*);
+void print_stats_rts(Process*, int*);
 
 /* MFQS */
 void sort_mfqs(Process*, int*);
 
 /* RTS */
-void hardRTS(Process*, int*);
-void softRTS(Process*, int*);
+void runRTS(Process*, int*, bool);
 void sort_mfqs(Process*, int*);
 
 #endif
