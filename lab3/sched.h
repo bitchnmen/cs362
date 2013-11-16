@@ -25,6 +25,7 @@ class Process {
     private:
 		int p_id;
 		int burst;
+		int burst_original;
 		int arrival;
 		int priority;
 		int deadline;
@@ -39,6 +40,7 @@ class Process {
 		void set_values(int,int,int,int,int,int);
 		int get_p_id() {return p_id;}
 		int get_burst() {return burst;}
+		int get_burst_original() {return burst_original;}
 		int get_arrival() {return arrival;}
 		int get_priority() {return priority;}
 		int get_deadline() {return deadline;}
@@ -65,14 +67,16 @@ int hs();
 /* Input */
 Process* getProcesses(int*);
 void print_in_file(Process*, int*);
+
+/* Stats */
 void print_stats(Process*, int*);
+void print_stats_rts(Process*, int*);
 
 /* MFQS */
 void sort_mfqs(Process*, int*);
 
 /* RTS */
-void hardRTS(Process*, int*);
-void softRTS(Process*, int*);
+void runRTS(Process*, int*, bool);
 void sort_mfqs(Process*, int*);
 
 #endif
