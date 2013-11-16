@@ -24,7 +24,7 @@ int hs(){
     vector<Process> **map;
     map = new vector<Process>*[100]; 
     for(int i =0; i < 100; i++){
-        map.push_back(new vector<Process>);
+        //map.push_back(new vector<Process>);
     }
     
     // add proccesses to map to start

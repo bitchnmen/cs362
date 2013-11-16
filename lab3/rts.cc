@@ -53,10 +53,16 @@ void runRTS(Process* processes, int* numLines, bool hard) {
 						processes[i].set_p_id(-1);
 					}
 				}
-		
-				if (processes[i].get_arrival() >= clock) {
+				
+				
+				//cout << "LDP "<< lowest_deadline_process << endl; 
+				//cout << "clock " << clock << endl;
+				//cout << "lowest deadline" << low_deadline << endl;
+				
+				if (processes[i].get_arrival() <= clock) {
 					int curr_deadline = processes[i].get_deadline();
                     
+					//cout << "curr deadline: " << curr_deadline << endl;
 					if (low_deadline == 0 || low_deadline > curr_deadline) {
 						low_deadline = curr_deadline;
 						lowest_deadline_process = i;
@@ -71,7 +77,7 @@ void runRTS(Process* processes, int* numLines, bool hard) {
 			}
 			processes[i].to_string();
         }
-		if (clock == 10) {exit(1);}
+		//if (clock == 10) {exit(1);}
 		
         int current_burst = processes[lowest_deadline_process].get_burst();
         processes[lowest_deadline_process].set_burst(current_burst-1);
@@ -99,7 +105,7 @@ void runRTS(Process* processes, int* numLines, bool hard) {
 		clock++;
     }
 	
-	//print_stats_rts(processes, numLines);
+	print_stats_rts(processes, numLines);
 	
 }
 
