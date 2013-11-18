@@ -15,11 +15,12 @@ int hs(){
         exit(1);
     }
 
+    
     int numLines;
     bool loop = true;
     // get processes
     Process* processes(getProcesses(&numLines));
-    
+    /*
     // initialize the vector of vectors   
     vector<Process> **map;
     map = new vector<Process>*[100]; 
@@ -49,7 +50,27 @@ int hs(){
                 cout << processes[j].get_priority() << endl;
             } 
             cout << "\n--DONE--\n\n" << endl;
-    } 
+    } */
+
+    vector< queue<Process*> > v;
+    
+    //for(int i = 0; i < numLines; i++){
+    //    v.push_back(queue<Process*>());
+    // }
+    
+    for(int i =0; i < 100; i++){
+            queue<Process*> q;
+            
+            for(int j = 0; j < numLines; j++){
+                if(processes[j].get_priority() == i){
+                    
+                    q.push(processes[j]);
+                }
+            }
+            v.push_back(q); 
+    }
+
+
     
     
    /*  
