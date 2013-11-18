@@ -73,7 +73,7 @@ void print_stats(Process*, int*);
 void print_stats_full(Process*, int*);
 
 /* MFQS */
-void sort_mfqs(Process*, int*);
+void quickSort(Process*, int, int);
 
 /* RTS */
 void runRTS(Process*, int*, bool);

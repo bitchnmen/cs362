@@ -40,11 +40,13 @@ int mfqs(){
     Process* processes(getProcesses(&numLines));
     
     cout << "Started sorting" << endl;
-    sort_mfqs(processes, &numLines);	
+    cout << "**************************numLines: " << numLines<< endl;
+    quickSort(processes, 0, numLines-1);	
+    
 
-	cout << "numLines: " << numLines << endl;
-    	
-	//print_in_file(processes, &numLines);
+	//cout << "numLines: " << numLines << endl;
+    cout << "Sorted: " << endl; 	
+	print_in_file(processes, &numLines);
     
     //int *start_times = new int[numLines];
     //int *end_times = new int[numLines];
@@ -61,6 +63,7 @@ int mfqs(){
 	//print_stats(processes, start_times, end_times, &numLines);
     
     while (loop){ 
+        cout << "Clock: " << clock << endl;
         //cout << "\n__________________________________________________________" << endl;
         for (int i = numLines-1; i >= 0; i--){
             //cout << "Clock: " << clock << endl;
@@ -186,7 +189,7 @@ int mfqs(){
 
 }
 
-
+/*
 void sort_mfqs(Process* processes, int* numLines){
     int max_arrival = 0;
 	Process* processesNEW = new Process[*numLines];
@@ -214,7 +217,40 @@ void sort_mfqs(Process* processes, int* numLines){
     processes = processesNEW;
 
 }
+*/
 
+void quickSort(Process* arr, int left, int right) {
+    int i = left, j = right;
+    Process tmp;
+    Process pivot = arr[(left + right) / 2];
 
+    /* partition */
+    while (i <= j) {
+        cout << "arr[i] = " << arr[i].get_arrival() << endl;
+        cout << "arr[j] = " << arr[j].get_arrival() << endl;
+        cout << "pivot = " << pivot.get_arrival() << endl;
 
+        while (arr[i].get_arrival() < pivot.get_arrival()){
+            cout << "stuck i loop" << endl;
+            i++;
+        }
+        while (arr[j].get_arrival() > pivot.get_arrival()){
+            cout << "stuck in j loop" << endl;
+            j--;
+        }
+        if (i<= j) {
+            cout << "switching and incrementing" << endl;
+            tmp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = tmp;
+            i++;
+            j--;
+        }
+    };
 
+/* recursion */
+if (left < j)
+    quickSort(arr, left, j);
+if (i < right)
+    quickSort(arr, i, right);
+}
