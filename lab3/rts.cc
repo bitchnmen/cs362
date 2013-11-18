@@ -14,6 +14,8 @@ int rts(){
 	int numLines;
 	Process* processes(getProcesses(&numLines));
 	
+		cout << " in rts" << endl;
+
 	if (rtsOption == 1 || rtsOption == 2) {
 		bool hard = (rtsOption == 1);
 		runRTS(processes, &numLines, hard);
@@ -24,6 +26,7 @@ int rts(){
 }
 
 void runRTS(Process* processes, int* numLines, bool hard) {
+
 	//print_in_file(processes, numLines);
 	
 	// if hard rts, filter processes. look processes that can't complete
@@ -37,18 +40,23 @@ void runRTS(Process* processes, int* numLines, bool hard) {
 	
 	int lowest_deadline_process;
 	int clock = 0;
-
-    while (true){ 
-	    cout << "_____________" << endl;
-	    cout << "Clock: " << clock << endl;
-	    cout << "_____________" << endl;
+	bool run = true;
+    while (run){ 
+//	    cout << "_____________" << endl;
+//	    cout << "Clock: " << clock << endl;
+//		cout << "_____________" << endl;
         int to_process = -1;
         for(int i = 0; i < *numLines; i++){
             if(hard){
+//				cout << "burst: " << processes[i].get_burst() << endl;
+//				cout << "deadline: " << processes[i].get_deadline() << endl;
+
                 if(clock + processes[i].get_burst() <= processes[i].get_deadline()){
-                
+					
+//					processes[i].to_string();
+					
                     if((processes[i].get_p_id() != -1) && (processes[i].get_arrival() <= clock) && (processes[i].get_burst() > 0)){
-                        //cout << "in if statement" << endl;
+//                        cout << "in if statement" << endl;
                         if((to_process == -1) || (processes[i].get_deadline() < processes[to_process].get_deadline())){
                             to_process = i; 
                         }else if(processes[i].get_deadline() == processes[to_process].get_deadline()){
@@ -63,11 +71,12 @@ void runRTS(Process* processes, int* numLines, bool hard) {
                     }    
 
                 }else{
+					cout << "1 .setting to -1" << endl;
                     processes[i].set_p_id(-1);
                 }
             }else{
                 if((processes[i].get_p_id() != -1) && (processes[i].get_arrival() <= clock) && (processes[i].get_burst() > 0)){
-                    cout << "in if statement" << endl;
+//                    cout << "in if statement" << endl;
                     if((to_process == -1) || (processes[i].get_deadline() < processes[to_process].get_deadline())){
                         to_process = i; 
                     }
@@ -78,10 +87,17 @@ void runRTS(Process* processes, int* numLines, bool hard) {
 
         
        //print_stats_rts(processes, numLines);
-        if(to_process == -1){
+	   
+		run = false;
+		for (int j = 0; j < *numLines; j++) {
+			if (processes[j].get_p_id() != -1 && processes[j].get_burst() > 0) {
+				run = true;
+			}
+		}
+		/*if(to_process == -1){
             cout << "All processes done." << endl;
             break;
-        }
+        }*/
         
 
         if(processes[to_process].get_start_time() == -1){
