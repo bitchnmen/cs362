@@ -10,6 +10,8 @@ Process* getProcesses(int *numLines){
 	cout << "2. testfileMEDIUM" << endl;
 	cout << "3. testfileSEMILARGE" << endl;
 	cout << "4. testfileLARGE" << endl;
+	cout << "5. testfile1" << endl;
+	cout << "6. testfile1" << endl;
 	cin >> inputfilenum;
 	cout << "\n";
 	
@@ -19,9 +21,14 @@ Process* getProcesses(int *numLines){
 		inputfilename = "testfileSEMILARGE";
 	} else if (inputfilenum == 4) {
 		inputfilename = "testfileLARGE";
+	} else if (inputfilenum == 5) {
+		inputfilename = "testfile1";		
+	} else if (inputfilenum == 6) {
+		inputfilename = "testfile0";		
 	} else {
 		inputfilename = "testfile";		
-	}
+
+    }
 
 
 	/* Counting the number of lines */

@@ -62,7 +62,11 @@ int mfqs(){
     
 	//print_stats(processes, start_times, end_times, &numLines);
     
+//    clock = processes[0].get_arrival();
+
     while (loop){ 
+        
+        bool doClock = true;
         cout << "Clock: " << clock << endl;
         //cout << "\n__________________________________________________________" << endl;
         for (int i = numLines-1; i >= 0; i--){
@@ -78,6 +82,7 @@ int mfqs(){
                     }
                     //execute for length of time quantum
                     if(!(processes[i].get_level() > (queues-1))){
+                        doClock = false;
                         for(int j = 0; j < (pow(2,processes[i].get_level())*q); j++) {
 
                             processes[i].set_burst(processes[i].get_burst() - 1);
@@ -123,6 +128,7 @@ int mfqs(){
                             }
                         }
                     } else {
+                        doClock = false;
                         while(true) {
                             processes[i].set_burst(processes[i].get_burst() - 1);
                             clock++;
@@ -180,6 +186,10 @@ int mfqs(){
                 loop = true;
                 break;
             }
+        }
+
+        if(doClock){
+            clock++;
         }
     }
 
