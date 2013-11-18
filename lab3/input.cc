@@ -2,30 +2,55 @@
 
 Process* getProcesses(int *numLines){
 
+	int inputfilenum;
+	string inputfilename;
+	
+	cout << "Choose a number for process input" << endl;
+	cout << "1. testfile" << endl;
+	cout << "2. testfileMEDIUM" << endl;
+	cout << "3. testfileSEMILARGE" << endl;
+	cout << "4. testfileLARGE" << endl;
+	cin >> inputfilenum;
+	cout << "\n";
+	
+	if (inputfilenum == 2) {
+		inputfilename = "testfileMEDIUM";
+	} else if (inputfilenum == 3) {
+		inputfilename = "testfileSEMILARGE";
+	} else if (inputfilenum == 4) {
+		inputfilename = "testfileLARGE";
+	} else {
+		inputfilename = "testfile";		
+	}
+
+
 	/* Counting the number of lines */
 	*numLines = -1;
-	ifstream in("testfileSEMILARGE");
+	ifstream in(inputfilename.c_str());
 	std::string unused;
 	while ( std::getline(in, unused) ) ++*numLines;
 	
 	cout << "Numlines: " << *numLines << endl;
-	int a;
-	cin >> a;
+	
 	
     /* Creating a new array of Processes to store our Processes */
 	Process* processes = new Process[*numLines];
+
+//	print_in_file(processes, numLines);
+//int a;
+//	cin >> a;
 	
 	/* Opening a new file to create the Processes with */
-	ifstream infile("testfileSEMILARGE");
+	ifstream infile(inputfilename.c_str());
     string line;
 	int count = 0;
 	getline(infile,line); //first line has words, we don't want those
 
 	/* looping through line by line and creating new processes, storing them in the array */
     while(getline(infile, line)) {
-        stringstream ss(line);
+        istringstream iss(line);
         int a, b, c, d, e, f;
-        if (!(ss >> a >> b >> c >> d >> e >> f)) {break;}
+        if (!(iss >> a >> b >> c >> d >> e >> f)) {break;}
         
 		//cout << "a: " << a << endl;
 		//cout << "count: " << count << endl;
