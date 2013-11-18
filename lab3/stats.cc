@@ -28,12 +28,12 @@ void print_stats_full(Process* processes, int* numLines){
         cout << processes[i].get_p_id()<< "\t" 
 			<< processes[i].get_start_time() << "\t\t"
 			<< processes[i].get_end_time() << "\t\t"
-			<< processes[i].get_end_time() - processes[i].get_arrival() - processes[i].get_burst_original() + 1 << "\t\t" 
+			<< processes[i].get_end_time() - processes[i].get_arrival() - processes[i].get_burst_original() << "\t\t" 
 			<< processes[i].get_end_time() - processes[i].get_arrival() << endl;
 			
 		if (processes[i].get_p_id() != -1) {
             numschd++;
-		    avgwait += processes[i].get_end_time() - processes[i].get_arrival() - processes[i].get_burst_original() + 1;
+		    avgwait += processes[i].get_end_time() - processes[i].get_arrival() - processes[i].get_burst_original();
 		    avgturn += processes[i].get_end_time() - processes[i].get_arrival();
         }
     }

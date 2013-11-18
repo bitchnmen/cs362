@@ -4,15 +4,19 @@ Process* getProcesses(int *numLines){
 
 	/* Counting the number of lines */
 	*numLines = -1;
-	ifstream in("testfileMEDIUM");
+	ifstream in("testfileSEMILARGE");
 	std::string unused;
 	while ( std::getline(in, unused) ) ++*numLines;
+	
+	cout << "Numlines: " << *numLines << endl;
+	int a;
+	cin >> a;
 	
     /* Creating a new array of Processes to store our Processes */
 	Process* processes = new Process[*numLines];
 	
 	/* Opening a new file to create the Processes with */
-	ifstream infile("testfileMEDIUM");
+	ifstream infile("testfileSEMILARGE");
     string line;
 	int count = 0;
 	getline(infile,line); //first line has words, we don't want those

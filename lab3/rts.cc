@@ -13,8 +13,6 @@ int rts(){
 	
 	int numLines;
 	Process* processes(getProcesses(&numLines));
-	
-		cout << " in rts" << endl;
 
 	if (rtsOption == 1 || rtsOption == 2) {
 		bool hard = (rtsOption == 1);
@@ -48,10 +46,11 @@ void runRTS(Process* processes, int* numLines, bool hard) {
         int to_process = -1;
         for(int i = 0; i < *numLines; i++){
             if(hard){
+				
 //				cout << "burst: " << processes[i].get_burst() << endl;
 //				cout << "deadline: " << processes[i].get_deadline() << endl;
 
-                if(clock + processes[i].get_burst() <= processes[i].get_deadline()){
+                if(processes[i].get_p_id() != -1 && clock + processes[i].get_burst() <= processes[i].get_deadline()){
 					
 //					processes[i].to_string();
 					
@@ -71,8 +70,10 @@ void runRTS(Process* processes, int* numLines, bool hard) {
                     }    
 
                 }else{
-					cout << "1 .setting to -1" << endl;
-                    processes[i].set_p_id(-1);
+//					cout << processes[i].get_p_id()<< " 1 .setting to -1" << endl;
+                    if(processes[i].get_end_time() == -1) {
+						processes[i].set_p_id(-1);
+					}
                 }
             }else{
                 if((processes[i].get_p_id() != -1) && (processes[i].get_arrival() <= clock) && (processes[i].get_burst() > 0)){
@@ -107,7 +108,7 @@ void runRTS(Process* processes, int* numLines, bool hard) {
         processes[to_process].set_burst(processes[to_process].get_burst() - 1);
         
         if(processes[to_process].get_burst() == 0 && processes[to_process].get_end_time() == -1){
-            processes[to_process].set_end_time(clock);        
+            processes[to_process].set_end_time(clock + 1);        
         }
         clock++;
         int b;
