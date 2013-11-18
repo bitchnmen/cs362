@@ -52,30 +52,49 @@ int hs(){
             cout << "\n--DONE--\n\n" << endl;
     } */
 
-    vector< queue<Process*> > v;
+    vector< queue<Process> > v;
     
     //for(int i = 0; i < numLines; i++){
     //    v.push_back(queue<Process*>());
     // }
     
     for(int i =0; i < 100; i++){
-            queue<Process*> q;
-            
+            queue<Process> q;
+            Process null = Process(-1,-1,-1,-1,-1,-1);
+            q.push(null); 
+            bool popped = false;
             for(int j = 0; j < numLines; j++){
+                
                 if(processes[j].get_priority() == i){
-                    
-                    q.push(processes[j]);
+                    Process p = processes[j];
+                    if(!popped){
+                        q.pop();
+                        popped = true;
+                    }
+                    q.push(p);
+                    p = q.front();
                 }
             }
             v.push_back(q); 
+             
+            queue<Process> temp = v[i];
+            Process pp = temp.front();
+            cout << "\nqueue" << i << endl;
+            pp.to_string();
     }
+   
+    cout << "__________________________" << endl;
 
+    Process p = v[66].front();
+    p.to_string();
 
+    int clock = 0;
+    while(true){
+         
+
+    }
     
-    
-   /*  
-    sort_hs(processes, &numLines);
-
+    /*
     for(int i = 0; i < numLines; i++){
 
         if(processes[i].get_priority() >= 0 && processes[i].get_priority() < 50 ){
@@ -94,37 +113,7 @@ int hs(){
             }
         }
     }
-
-
-
+    */
 
 }
 
-void sort_hs(Process* processes, int* numLines){
-    int max_arrival = 0;
-	Process* processesNEW = new Process[*numLines];
-    
-    for(int i = 0; i < *numLines; i++){
-        if (processes[i].get_arrival() > max_arrival){
-            max_arrival = processes[i].get_arrival();
-        }
-    }
-    int count = 0;
-    for(int i = 0; i <= max_arrival; i++){
-        for(int j = 0; j < *numLines; j++){
-            if (processes[j].get_arrival() == i){
-                processesNEW[count] = processes[j];
-                count++;
-            }
-        }
-    }
-    
-    cout << "Processes:" << endl;
-	print_in_file(processes, numLines);
-    cout << "ProcessesNEW:" << endl;
-	print_in_file(processesNEW, numLines);
-    
-    processes = processesNEW;
-
-*/
-}
