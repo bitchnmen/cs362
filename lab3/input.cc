@@ -4,7 +4,7 @@ Process* getProcesses(int *numLines){
 
 	/* Counting the number of lines */
 	*numLines = -1;
-	ifstream in("testfile");
+	ifstream in("testfileLARGE");
 	std::string unused;
 	while ( std::getline(in, unused) ) ++*numLines;
 	
@@ -12,7 +12,7 @@ Process* getProcesses(int *numLines){
 	Process* processes = new Process[*numLines];
 	
 	/* Opening a new file to create the Processes with */
-	ifstream infile("testfile");
+	ifstream infile("testfileLARGE");
     string line;
 	int count = 0;
 	getline(infile,line); //first line has words, we don't want those

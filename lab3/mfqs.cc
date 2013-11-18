@@ -182,7 +182,7 @@ int mfqs(){
 
     cout << "FINISHED" << endl;
 	//print_in_file(processes, &numLines);
-	print_stats(processes, &numLines);
+	print_stats_full(processes, &numLines);
 
 }
 
