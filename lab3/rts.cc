@@ -32,81 +32,73 @@ void runRTS(Process* processes, int* numLines, bool hard) {
 			if (processes[i].get_deadline() < processes[i].get_burst() + processes[i].get_arrival()) {
 				processes[i].set_p_id(-1);
 			}
-			processes[i].set_level(0);
 		}
 	}
 	
 	int lowest_deadline_process;
 	int clock = 0;
-    int low_deadline = 0;
-    bool loop = true;
-    while (loop){ 
-	
-		cout << "CLOCK = " << clock << endl;
-	
-        for(int i = 0; i < *numLines; i++) {
-        
-			if (processes[i].get_burst() != 0 && processes[i].get_p_id() != -1) {
-				//if hard rts, check for expired deadlines
-				if (hard) {
-					if (processes[i].get_deadline() < processes[i].get_burst() + clock) {
-						processes[i].set_p_id(-1);
-					}
-				}
-				
-				
-				//cout << "LDP "<< lowest_deadline_process << endl; 
-				//cout << "clock " << clock << endl;
-				//cout << "lowest deadline" << low_deadline << endl;
-				
-				if (processes[i].get_arrival() <= clock) {
-					int curr_deadline = processes[i].get_deadline();
-                    
-					//cout << "curr deadline: " << curr_deadline << endl;
-					if (low_deadline == 0 || low_deadline > curr_deadline) {
-						low_deadline = curr_deadline;
-						lowest_deadline_process = i;
-						
-					/* tiebreaker | add more later if needed*/
-					} else if (low_deadline == curr_deadline) {          
-						if (processes[lowest_deadline_process].get_p_id() > processes[i].get_p_id()) {
-							lowest_deadline_process = i;
-						}
-					}
-				}
-			}
-			processes[i].to_string();
+
+    while (true){ 
+	    cout << "_____________" << endl;
+	    cout << "Clock: " << clock << endl;
+	    cout << "_____________" << endl;
+        int to_process = -1;
+        for(int i = 0; i < *numLines; i++){
+            if(hard){
+                if(clock + processes[i].get_burst() <= processes[i].get_deadline()){
+                
+                    if((processes[i].get_p_id() != -1) && (processes[i].get_arrival() <= clock) && (processes[i].get_burst() > 0)){
+                        cout << "in if statement" << endl;
+                        if((to_process == -1) || (processes[i].get_deadline() < processes[to_process].get_deadline())){
+                            to_process = i; 
+                        }else if(processes[i].get_deadline() == processes[to_process].get_deadline()){
+                            if(processes[i].get_arrival() < processes[to_process].get_arrival()){
+                                to_process = i;  
+                            }else if(processes[i].get_arrival() == processes[to_process].get_arrival()){
+                                if(processes[i].get_p_id() < processes[to_process].get_p_id()){
+                                    to_process = i;  
+                                } 
+                            }         
+                        }
+                    }    
+
+                }else{
+                    processes[i].set_p_id(-1);
+                }
+            }else{
+                if((processes[i].get_p_id() != -1) && (processes[i].get_arrival() <= clock) && (processes[i].get_burst() > 0)){
+                    cout << "in if statement" << endl;
+                    if((to_process == -1) || (processes[i].get_deadline() < processes[to_process].get_deadline())){
+                        to_process = i; 
+                    }
+                }
+            }
+            //cout << "To Process: " << to_process << endl;
         }
-		//if (clock == 10) {exit(1);}
-		
-        int current_burst = processes[lowest_deadline_process].get_burst();
-        processes[lowest_deadline_process].set_burst(current_burst-1);
-		
-		
-		if (processes[lowest_deadline_process].get_start_time() == -1) {
-			processes[lowest_deadline_process].set_start_time(clock);
-		}	
-			
-		if (processes[lowest_deadline_process].get_burst() == 0 && processes[lowest_deadline_process].get_end_time() == -1) {
-			processes[lowest_deadline_process].set_end_time(clock);
-			low_deadline = 0;
-		}
 
-		loop = false;
-		for(int k = 0; k < *numLines; k++){
-			if(processes[k].get_burst() > 0){
-				loop = true;
-				break;
-			}
-		}
-		//print_stats_rts(processes, numLines);
+        
+       //print_stats_rts(processes, numLines);
+        if(to_process == -1){
+            cout << "All processes done." << endl;
+            break;
+        }
+        
 
-		
-		clock++;
-    }
-	
-	print_stats_rts(processes, numLines);
-	
+        if(processes[to_process].get_start_time() == -1){
+            processes[to_process].set_start_time(clock);        
+        }
+        
+        processes[to_process].set_burst(processes[to_process].get_burst() - 1);
+        
+        if(processes[to_process].get_burst() == 0 && processes[to_process].get_end_time() == -1){
+            processes[to_process].set_end_time(clock);        
+        }
+        clock++;
+        int b;
+        //cin >> b;
+
+    }	
+    print_stats_rts(processes, numLines);
 }
 
 void sort_rts(Process* processes, int* numLines){

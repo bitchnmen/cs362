@@ -45,7 +45,7 @@ int hs(){
                 //Process p = processes[j];
                 //p.to_string();
                 cout << "p.id = " << processes[j].get_p_id() << endl;
-                v.push_back(processes[j]);
+                //v.push_back(processes[j]);
                 cout << processes[j].get_priority() << endl;
             } 
             cout << "\n--DONE--\n\n" << endl;
