@@ -10,8 +10,9 @@ void print_stats(Process* processes, int* numLines){
     }
 }
 
-void print_stats_rts(Process* processes, int* numLines){
-    
+void print_stats_full(Process* processes, int* numLines){
+   
+    cout << "\n\n" << endl;
     cout << "PID"<< "\t" 
 		<< "Start Time" << "\t" 
 		<< "End Time" << "\t" 

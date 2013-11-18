@@ -48,7 +48,7 @@ void runRTS(Process* processes, int* numLines, bool hard) {
                 if(clock + processes[i].get_burst() <= processes[i].get_deadline()){
                 
                     if((processes[i].get_p_id() != -1) && (processes[i].get_arrival() <= clock) && (processes[i].get_burst() > 0)){
-                        cout << "in if statement" << endl;
+                        //cout << "in if statement" << endl;
                         if((to_process == -1) || (processes[i].get_deadline() < processes[to_process].get_deadline())){
                             to_process = i; 
                         }else if(processes[i].get_deadline() == processes[to_process].get_deadline()){
@@ -98,7 +98,7 @@ void runRTS(Process* processes, int* numLines, bool hard) {
         //cin >> b;
 
     }	
-    print_stats_rts(processes, numLines);
+    print_stats_full(processes, numLines);
 }
 
 void sort_rts(Process* processes, int* numLines){

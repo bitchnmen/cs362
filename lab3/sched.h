@@ -70,7 +70,7 @@ void print_in_file(Process*, int*);
 
 /* Stats */
 void print_stats(Process*, int*);
-void print_stats_rts(Process*, int*);
+void print_stats_full(Process*, int*);
 
 /* MFQS */
 void sort_mfqs(Process*, int*);
