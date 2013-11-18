@@ -56,6 +56,7 @@ class Process {
 		void set_level(int _level) {level = _level;}
 		void set_start_time(int _start_time) {start_time = _start_time;}
 		void set_end_time(int _end_time) {end_time = _end_time;}
+		void set_io(int _io) {io = _io;}
 		void to_string();
         bool is_done();
 };
