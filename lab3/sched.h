@@ -28,12 +28,14 @@ class Process {
 		int burst_original;
 		int arrival;
 		int priority;
+		int priority_original;
 		int deadline;
 		int start_time;
 		int end_time;
 		int io;
 		int age;
 		int level;
+		int increment;
     public:
 		Process();
         Process(int, int, int, int, int, int);
@@ -43,12 +45,14 @@ class Process {
 		int get_burst_original() {return burst_original;}
 		int get_arrival() {return arrival;}
 		int get_priority() {return priority;}
+		int get_priority_original() {return priority_original;}
 		int get_deadline() {return deadline;}
 		int get_io() {return io;}
 		int get_level() {return level;}
 		int get_age() {return age;}
 		int get_start_time() {return start_time;}
 		int get_end_time() {return end_time;}
+		int get_increment() {return increment;}
 		void set_p_id(int _p_id) {p_id = _p_id;}
 		void set_burst(int _burst) {burst = _burst;}
 		void set_priority(int _priority) {priority = _priority;}
@@ -57,6 +61,7 @@ class Process {
 		void set_start_time(int _start_time) {start_time = _start_time;}
 		void set_end_time(int _end_time) {end_time = _end_time;}
 		void set_io(int _io) {io = _io;}
+		void set_increment(int _increment) {increment = _increment;}
 		void to_string();
         bool is_done();
 };
