@@ -54,7 +54,11 @@ int hs(){
 
     vector< queue<Process> > v;
     vector<Process> done;
-
+        
+    //for(int i = 0; i < v.size(); i ++){
+    //    swap(v[i], new queue(process));
+    //}
+	
     //for(int i = 0; i < numLines; i++){
     //    v.push_back(queue<Process*>());
     // }
@@ -65,7 +69,6 @@ int hs(){
             queue.push(null); 
             bool popped = false;
             for(int j = 0; j < numLines; j++){
-                
                 if(processes[j].get_priority() == i){
                     Process p = processes[j];
                     if(!popped){
@@ -73,126 +76,168 @@ int hs(){
                         popped = true;
                     }
                     queue.push(p);
-                    p = queue.front();
                 }
             }
             v.push_back(queue); 
-            /* 
-            queue<Process> temp;
-            temp = v[i];
-            Process pp = temp.front();
+            //queue<Process> temp;
+            //temp = v[i];
+            //Process pp = temp.front();
             cout << "\nqueue" << i << endl;
-            pp.to_string();
-            */
+            //pp.to_string();
     }
-   
-
+    
+	bool all_done;
     int clock = 0;
     while(true){
+		
+		all_done = true;
+		for(int i = 99; i >= 0 && all_done; i--){
+			queue<Process> queue = v[i];
+			if(queue.front().get_p_id() != -1){
+				all_done = false;
+			}
+		}
+		if(clock == 10 || all_done){
+			break;
+		}
+		
+        bool doclock = true;
+        cout << "Clock: " << clock << endl;
+        cout << "done.size(): " << done.size() << endl;
         //hundred count thingy
+        /*
+        if (clock != 0 && clock % 100 == 0){
+            //loop through user processes
+            for(int i = 0; i < 50; i++){
+                cout << "loop1" << endl;
+                queue<Process> queue = v[i];
+                for(int j = 0; j < queue.size(); j++){
+                    cout << "loop2" << endl;
+                    Process p = queue.front();
+                    queue.pop(); 
+                    if(p.get_increment() == p.get_priority_original()){
+                         for(int m = 0; m < 10; m++){
+                            cout << "loop3" << endl;
+                            //user
+                            if(p.get_priority() < 49){
+                                p.set_priority(p.get_priority() + 1);
+                            } 
+                         }
+                    }
+                    v[p.get_priority()].push(p);
+                }
+            } 
 
-
+        }
+        */
         //boolean to start from the top if any priority was changed
         bool broke = false;
         //loop to go through each queue from the highest priority to the lowest to run processes
-        for(int i = 99; i <= 0; i++){
+        for(int i = 99; i >= 0; i--){
+            //cout << "loop4" << endl;
+            //user
             queue<Process> queue = v[i];
+            cout << "queue.size(): of v[" << i << "]: " << queue.size() << endl;
             //loo[ to go through each process in the queue
-            for(int j = 0; j = queue.size(); j++){
-                Process p = queue.front(); 
-                queue.pop();
-                //loop to run the process for the length of the time quantum
-                for(int k = 0; k < q; k++){
-                    //if the process is on the second to last burst and has io
-                    if(k == p.get_burst_original() - 1 && p.get_io() > 0){
-                       //do IO
-                       int original_io = p.get_io();
-                       //loop to decrement io
-                       for(int m = 0; m < p.get_io(); m++){
-                           p.set_io(p.get_io() - 1);
-                           clock++;
-                       }
-                       //loop to adjust priority
-                       for(int m = 0; m < original_io; m++){
-                            if(p.get_priority() < 50){
-                                if(p.get_priority() < 49){
-                                    p.set_priority(p.get_priority() + 1);
-                                } 
-                            }else{
-                                if(p.get_priority() > 49 && p.get_priority() < 98){
-                                    p.set_priority(p.get_priority() + 1);
-                                } 
-
-                            }
-                       }
-                       //break the loops and start from the top
-                       broke = true;
-                       break;
-                    }else{
-                        //decrement burst
-                        if(p.get_burst() > 0){
-                            p.set_burst(p.get_burst() - 1);
-                            clock++;
-
-                            
+            for(int j = 0; j < queue.size(); j++){
+                //cout << "loop5" << endl;
+				bool pdone = false;
+                Process p = queue.front();
+				
+				queue.pop();
+				
+				exit(0);
+				
+                if(p.get_p_id() != -1){     
+                    
+                    //loop to run the process for the length of the time quantum
+                    for(int k = 0; k < q; k++){
+                        //cout << "loop6" << endl;
+                        //if the process is on the second to last burst and has io
+                        if(p.get_burst() == 1 && p.get_io() > 0){
+                           //do IO
+                           int original_io = p.get_io();
+                           //loop to decrement io
+                           for(int m = 0; m < original_io; m++){
+                               //cout << "loop7" << endl;
+                               p.set_io(p.get_io() - 1);
+                               clock++;
+                           }
+                           doclock = false;
+                           //loop to adjust priority
+                           if(p.get_priority() < 50){
+								for(int m = 0; m < original_io; m++){
+									//cout << "loop8" << endl;	
+									//user
+									if(p.get_priority() < 49){
+										p.set_priority(p.get_priority() + 1);
+									} 
+									
+								}
+							}
+							
+							
+							v[p.get_priority()].push(p);
+						   
+                           //break the loops and start from the top
+                           broke = true;
+                           cout << "BROKE" << endl;
+                           break;
                         }else{
-                            done.push_back(p);  
+							cout << "Running process............" << endl;
+                            //decrement burst
+                            if(p.get_burst() > 0){
+                                p.set_burst(p.get_burst() - 1);
+                                clock++;
+                                doclock = false;
+                            }else{
+                                pdone = true;
+                                done.push_back(p);  
+                            }
                         }
+                        
                     }
+                    
                     if(broke){
+                        cout << "BROKE" << endl;
                         break;
                     }
-                }
-                
-                if(broke){
-                    break;
-                }else{
                     //if process isnt finished at end of time quantum, decrease priority by time quantum
-                    for(int k = 0; k < q; k++){
-                        //////////////////////////////////////////////////////////check not to go lower than original
+                    if(!pdone){
                         if(p.get_priority() < 50){
-                            if(p.get_priority() < 49){
-                                p.set_priority(p.get_priority() - 1);
+							//cout << "loop66" << endl;
+							//check not to go lower than original and lower than 0
+							if(p.get_priority()-q > p.get_priority_original() && p.get_priority()-q> 0){                            
+								p.set_priority(p.get_priority() - q);
                             }
-                        }else{
-                            if(p.get_priority() > 49 && p.get_priority() < 98){
-                                p.set_priority(p.get_priority() - 1);
-                            } 
-
                         }
-                    }
-                    broke = true;
-                    break;
+						
+						cout << "HERE" << endl;
+						v[p.get_priority()].push(p);
+						broke = true;
+						cout << "BROKE" << endl;
+						break;
+					}
+                    
                 }
             }
             if(broke){
+                cout << "BROKE" << endl;
                 break;
             }
         }
-             
-
-    }
-    
-    /*
-    for(int i = 0; i < numLines; i++){
-
-        if(processes[i].get_priority() >= 0 && processes[i].get_priority() < 50 ){
-        //low band (user)
-            if(start_times[i] == -1 && processes[i].get_burst() > 0){
-            // not done so demote 
-            }else{
-            // boost
-
-            }
-
-        }else if(processes[i].get_priority() >=50 && processes[i].get_priority() < 100 ){
-        //high band (kernel)
-            if(start_times[i] == -1 && processes[i].get_burst() > 0){
-            // not done so demote 
-            }
+        if(doclock){
+            clock++;
         }
     }
-    */
+	
+	cout << "\n\n\n-----------------"<< endl;
 
+	for(int i = 0; i < v[82].size(); i++){
+		Process p = v[82].front();
+		p.to_string();
+		v[82].pop();
+	}
+	
 }
 

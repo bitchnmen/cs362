@@ -6,12 +6,14 @@ Process::Process() {
 	burst_original = -1;
 	arrival = -1;
 	priority = -1;
+	priority_original = -1;
 	deadline = -1; 
 	io = -1;
 	level = 0;
 	age = -1;
 	start_time = -1;
-	end_time = -1;
+    end_time = -1;
+	increment = burst;
 }
 
 Process::Process (int p_ida, int bursta, int arrivala, int prioritya, int deadlinea, int ioa) {
@@ -20,11 +22,13 @@ Process::Process (int p_ida, int bursta, int arrivala, int prioritya, int deadli
 	burst_original = bursta;
 	arrival = arrivala;
 	priority = prioritya;
+	priority_original = priority;
 	deadline = deadlinea; 
 	io = ioa;
 	level = 1;
 	start_time = -1;
 	end_time = -1;
+	increment = burst;
 }
 
 void Process::set_values(int p_ida, int bursta, int arrivala, int prioritya, int deadlinea, int ioa) {
@@ -33,8 +37,10 @@ void Process::set_values(int p_ida, int bursta, int arrivala, int prioritya, int
 	burst_original = bursta;
 	arrival = arrivala;
 	priority = prioritya;
+	priority_original = priority;
 	deadline = deadlinea; 
 	io = ioa;
+	increment = burst;
 }
 
 void Process::to_string() {
