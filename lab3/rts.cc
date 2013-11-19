@@ -14,9 +14,21 @@ int rts(){
 	int numLines;
 	Process* processes(getProcesses(&numLines));
 
+	cout << "returned: " << endl;
+	
 	if (rtsOption == 1 || rtsOption == 2) {
 		bool hard = (rtsOption == 1);
+		
+		/*timing code */
+		clock_t t;
+		t = clock();
+		
 		runRTS(processes, &numLines, hard);
+		
+		/*timing code */
+		t = clock() - t;
+		cout << "\nTotal time: " << ((float)t/CLOCKS_PER_SEC) << " seconds" << endl;
+		
 	} else {
 		cout << "\nError on menu selection.\n";
 		exit(1);
@@ -41,7 +53,7 @@ void runRTS(Process* processes, int* numLines, bool hard) {
 	bool run = true;
     while (run){ 
 //	    cout << "_____________" << endl;
-//	    cout << "Clock: " << clock << endl;
+	    cout << "Clock: " << clock << endl;
 //		cout << "_____________" << endl;
         int to_process = -1;
         for(int i = 0; i < *numLines; i++){
@@ -100,14 +112,16 @@ void runRTS(Process* processes, int* numLines, bool hard) {
             break;
         }*/
         
-
-        if(processes[to_process].get_start_time() == -1){
+		cout << "to process: " << to_process << endl;
+        if(to_process != -1 && processes[to_process].get_start_time() == -1){
             processes[to_process].set_start_time(clock);        
         }
         
-        processes[to_process].set_burst(processes[to_process].get_burst() - 1);
-        
-        if(processes[to_process].get_burst() == 0 && processes[to_process].get_end_time() == -1){
+		if(to_process != -1) {
+			processes[to_process].set_burst(processes[to_process].get_burst() - 1);
+        }
+		
+        if(to_process != -1 && processes[to_process].get_burst() == 0 && processes[to_process].get_end_time() == -1){
             processes[to_process].set_end_time(clock + 1);        
         }
         clock++;

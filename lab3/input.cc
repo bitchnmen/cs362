@@ -11,7 +11,10 @@ Process* getProcesses(int *numLines){
 	cout << "3. testfileSEMILARGE" << endl;
 	cout << "4. testfileLARGE" << endl;
 	cout << "5. testfile1" << endl;
-	cout << "6. testfile1" << endl;
+	cout << "6. testfile100" << endl;
+	cout << "7. testfile1000" << endl;
+	cout << "8. testfile10000" << endl;
+	cout << "9. testfile100000" << endl;
 	cin >> inputfilenum;
 	cout << "\n";
 	
@@ -24,7 +27,13 @@ Process* getProcesses(int *numLines){
 	} else if (inputfilenum == 5) {
 		inputfilename = "testfile1";		
 	} else if (inputfilenum == 6) {
-		inputfilename = "testfile0";		
+		inputfilename = "testfile100";		
+	} else if (inputfilenum == 7) {
+		inputfilename = "testfile1000";		
+	} else if (inputfilenum == 8) {
+		inputfilename = "testfile10000";		
+	} else if (inputfilenum == 9) {
+		inputfilename = "testfile100000";		
 	} else {
 		inputfilename = "testfile";		
 
@@ -65,14 +74,13 @@ Process* getProcesses(int *numLines){
 		if (a == count + 1 && b > 0 && c >= 0 && d > 0 && e > 0 && f >= 0) {
 			processes[count].set_values(a, b, c, d, e, f);
 			
-		} else {
-			--*numLines;
+			cout << "a: " << a << endl;
 		}
 		count++;
     }
 	
     cout << "done inputing" << endl;
-	print_in_file(processes, numLines);
+//	print_in_file(processes, numLines);
     return processes;
 }
 

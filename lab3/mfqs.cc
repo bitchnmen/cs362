@@ -39,6 +39,10 @@ int mfqs(){
 	bool loop = true;
     Process* processes(getProcesses(&numLines));
     
+	/*timing code */
+		clock_t t;
+		t = clock();
+	
     cout << "Started sorting" << endl;
     cout << "**************************numLines: " << numLines<< endl;
     quickSort(processes, 0, numLines-1);	
@@ -58,7 +62,7 @@ int mfqs(){
     //}
 
 
-    int clock = 0;
+    int count = 0;
     
 	//print_stats(processes, start_times, end_times, &numLines);
     
@@ -67,18 +71,18 @@ int mfqs(){
     while (loop){ 
         
         bool doClock = true;
-        cout << "Clock: " << clock << endl;
+        cout << "Clock: " << count << endl;
         //cout << "\n__________________________________________________________" << endl;
         for (int i = numLines-1; i >= 0; i--){
-            //cout << "Clock: " << clock << endl;
+            //cout << "Clock: " << count << endl;
             //print_stats(processes, &numLines);
             //check for arrival
-            if(processes[i].get_arrival() <= clock){
+            if(processes[i].get_arrival() <= count){
                 //check if there is anything left to process
                 if(processes[i].get_burst() > 0){
                     //add start to array if not started yet
                     if(processes[i].get_start_time() == -1){
-                        processes[i].set_start_time(clock);  
+                        processes[i].set_start_time(count);  
                     }
                     //execute for length of time quantum
                     if(!(processes[i].get_level() > (queues-1))){
@@ -86,7 +90,7 @@ int mfqs(){
                         for(int j = 0; j < (pow(2,processes[i].get_level())*q); j++) {
 
                             processes[i].set_burst(processes[i].get_burst() - 1);
-                            clock++;
+                            count++;
                             //cout << "Clock: " << clock << endl;
                             
                             //age all processes in last queue  
@@ -119,7 +123,7 @@ int mfqs(){
                                 } else {
                                     //otherwise mark its done
                                     if(processes[m].get_end_time() == -1){
-                                       processes[m].set_end_time(clock);  
+                                       processes[m].set_end_time(count);  
                                     }
                                 }
                             }
@@ -131,8 +135,8 @@ int mfqs(){
                         doClock = false;
                         while(true) {
                             processes[i].set_burst(processes[i].get_burst() - 1);
-                            clock++;
-                            //cout << "Clock: " << clock << endl;
+                            count++;
+                            //cout << "Clock: " << count << endl;
                             
                             //age all processes in last queue  
                             for(int m = 0; m < numLines; m++){
@@ -163,7 +167,7 @@ int mfqs(){
                                 } else {
                                     //otherwise mark its done
                                     if(processes[m].get_end_time() == -1){
-                                       processes[m].set_end_time(clock);  
+                                       processes[m].set_end_time(count);  
                                     }
                                 }
                             }
@@ -189,13 +193,16 @@ int mfqs(){
         }
 
         if(doClock){
-            clock++;
+            count++;
         }
     }
 
     cout << "FINISHED" << endl;
 	//print_in_file(processes, &numLines);
 	print_stats_full(processes, &numLines);
+	/*timing code */
+		t = clock() - t;
+		cout << "\nTotal time: " << ((float)t/CLOCKS_PER_SEC) << " seconds" << endl;
 
 }
 
