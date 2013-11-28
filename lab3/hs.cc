@@ -82,7 +82,7 @@ int hs(){
             //queue<Process> temp;
             //temp = v[i];
             //Process pp = temp.front();
-            cout << "\nqueue" << i << endl;
+            //cout << "\nqueue" << i << endl;
             //pp.to_string();
     }
     
@@ -97,7 +97,7 @@ int hs(){
 				all_done = false;
 			}
 		}
-		if(clock == 10 || all_done){
+		if(clock == 1 || all_done){
 			break;
 		}
 		
@@ -146,13 +146,12 @@ int hs(){
 				
 				queue.pop();
 				
-				exit(0);
 				
                 if(p.get_p_id() != -1){     
                     
                     //loop to run the process for the length of the time quantum
                     for(int k = 0; k < q; k++){
-                        //cout << "loop6" << endl;
+                        cout << "loop6" << endl;
                         //if the process is on the second to last burst and has io
                         if(p.get_burst() == 1 && p.get_io() > 0){
                            //do IO
