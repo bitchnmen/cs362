@@ -32,17 +32,21 @@ int main(int argc, char *argv[]){
 static void * approachintersection(void* arg){
 	unsigned int * carnumberptr;
 	unsigned int carnumber;
-	int cardirection = rndom();
-	
+	double temp = rndom();
+    int cardirection;
+    if(temp >= .75){
+         cardirection = 1;
+    }else if(temp >= .50){
+         cardirection = 2;
+    }else if(temp >= .25){
+         cardirection = 3;
+    }else{
+         cardirection = 4;
+    }
+
     carnumberptr = (unsigned int*) arg;
 	carnumber = (unsigned int) *carnumberptr;
 
-	gostraight(cardirection, carnumber);
-
-	return (void*)carnumberptr;
-}
-
-static void gostraight(int cardirection, unsigned int carnumber){
     pthread_mutex_lock(&intersection_mutex);
     switch(cardirection){
         case 1:
@@ -57,37 +61,33 @@ static void gostraight(int cardirection, unsigned int carnumber){
         case 4:
             printf("Car %d, Moving West-East\n", carnumber);
             break;
-        }
+    }
+
+    drive();
+
     pthread_mutex_unlock(&intersection_mutex);
+
+	return (void*)carnumberptr;
 }
 
 /* Returns a random number from 0 to 1 */ 
-int rndom() { 
+double rndom() { 
     const long A = 48271; 
     const long M = 2147483647; 
     const long Q = M/A; 
     const long R = M%A; 
+     
     static long state = 1; 
     long t = A * (state % Q) - R * (state / Q); 
 
-    if (t > 0) { 
-        state = t;
-    } else { 
-        state = t + M;
-        double temp = ((double) state/M); 
-        
-        int r;
+    if (t > 0) 
+      state = t;
+    else 
+      state = t + M;
+    return ((double) state/M); 
+} 
 
-        if(temp >= .75){
-            r = 1;
-        }else if(temp >= .50){
-            r = 2;
-        }else if(temp >= .25){
-            r = 3;
-        }else{
-            r = 4;
-        }
-
-        return r;
-    }
+void drive(){
+    usleep(1000 * 1000);
 }
+

@@ -15,14 +15,14 @@
 #include <map>
 #include <queue>
 #include <time.h>
+#include <unistd.h>
 
 using namespace std;
 
 
 static void * approachintersection(void* arg);
 
-static void gostraight(int cardirection, unsigned int carnumber);
+double rndom();
 
-int rndom();
-
+void drive();
 
