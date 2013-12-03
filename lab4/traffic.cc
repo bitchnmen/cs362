@@ -66,8 +66,6 @@ static void * approachintersection(void* arg){
     drive();
 
     pthread_mutex_unlock(&intersection_mutex);
-
-	return (void*)carnumberptr;
 }
 
 /* Returns a random number from 0 to 1 */ 
