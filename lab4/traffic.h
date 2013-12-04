@@ -41,6 +41,6 @@ static void * approachintersection(void* arg);
 
 double rndom();
 
-void drive();
+int drive(int);
 
 void quickSort(Car*, int, int);

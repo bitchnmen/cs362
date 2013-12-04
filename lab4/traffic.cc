@@ -46,49 +46,76 @@ int main(int argc, char *argv[]){
     queue< Car > s;
     queue< Car > e;
     queue< Car > w;
-    Car[] = Car[NUMCARS];
-
+    Car *cars = new Car[NUMCARS];
+    
     for(int i = 0; i < NUMCARS; i++){
         double temp = rndom();
         int cardirection = ((int)(temp * 4)) + 1;
-
        
-        
-        temp = rndom();
-        int cararrival = ((int)(temp * MAXARRIVE)) + 1;
+        double temp2 = rndom();
+        int cararrival = ((int)(temp2 * MAXARRIVE)) + 1;
 
-        Car c = Car(i + 1, cardirection, cararrival);
+        Car c = Car();
+        c.set_id(i+1);
+        c.set_arrival(cararrival);
+        c.set_direction(cardirection);
            
-        if(cardirection = 1){
-            n.push(c);
-        }else if(cardirection = 2){
-            s.push(c);
-        }else if(cardirection = 3){
-            e.push(c);
-        }else{
-            w.push(c);
-        }
-
-                 
+        cars[i] = c;
+        //cout << "ID: " << c.get_id() << ", Arrival: " << c.get_arrival()<< endl;      
     }
 
-    
-    
-    int clock = 1;
-    while(true){
-        
+    quickSort(cars, 0, NUMCARS-1);
+
+    for(int i = 0; i < NUMCARS; i++){
+        int cardirection = cars[i].get_direction();
+        if(cardirection = 1){
+            n.push(cars[i]);
+        }else if(cardirection = 2){
+            s.push(cars[i]);
+        }else if(cardirection = 3){
+            e.push(cars[i]);
+        }else{
+            w.push(cars[i]);
+        }
+    }
+   
+    cout << n.size() << endl;
+         
+    int clock = 0;
+    while(n.size() > 0 || s.size() > 0 || e.size() > 0 || w.size() > 0){
+        cout << "\nClock: " << clock << endl; 
+        int tempclock = clock;
+
         pthread_t carthreads[4];
+        
         if(n.front().get_arrival() <= clock){
-            pthread_create(&carthreads[0], NULL, approachintersection,  (void*)n.front().get_id());
+            pthread_create(&carthreads[0], NULL, approachintersection,  (void*)n.front().get_direction());
+            clock = drive(clock);
+            printf("Car %d, Moving North-South\n", n.front().get_id());
+            n.pop();
         }
-        if(n.front().get_arrival() <= clock){
-            pthread_create(&carthreads[1], NULL, approachintersection,  (void*)s.front().get_id());
+        if(s.front().get_arrival() <= clock){
+            pthread_create(&carthreads[1], NULL, approachintersection,  (void*)s.front().get_direction());
+            clock = drive(clock);
+            printf("Car %d, Moving South-North\n", s.front().get_id());
+            s.pop();
         }
-        if(n.front().get_arrival() <= clock){
-            pthread_create(&carthreads[2], NULL, approachintersection,  (void*)e.front().get_id());
+        if(e.front().get_arrival() <= clock){
+            pthread_create(&carthreads[2], NULL, approachintersection,  (void*)e.front().get_direction());
+            clock = drive(clock);
+            printf("Car %d, Moving East-West\n", e.front().get_id());
+            e.pop();
         }
-        if(n.front().get_arrival() <= clock){
-            pthread_create(&carthreads[3], NULL, approachintersection,  (void*)w.front().get_id());
+        if(w.front().get_arrival() <= clock){
+            pthread_create(&carthreads[3], NULL, approachintersection,  (void*)w.front().get_direction());
+            clock = drive(clock);
+            printf("Car %d, Moving West-East\n", w.front().get_id());
+            w.pop();
+        }
+
+        if(clock == tempclock){
+            clock++;
+            printf("No cars drove through the intersection.");
         }
         
 
@@ -99,23 +126,7 @@ int main(int argc, char *argv[]){
 }
 
 static void * approachintersection(void* arg){
-
     pthread_mutex_lock(&intersection_mutex);
-    switch(cardirection){
-        case 1:
-            printf("Car %d, Moving North-South\n", carnumber);
-            break;
-        case 2:
-            printf("Car %d, Moving South-North\n", carnumber);
-            break;
-        case 3:
-            printf("Car %d, Moving East-West\n", carnumber);
-            break;
-        case 4:
-            printf("Car %d, Moving West-East\n", carnumber);
-            break;
-    }
-
     pthread_mutex_unlock(&intersection_mutex);
 }
 
@@ -126,7 +137,8 @@ double rndom() {
     const long Q = M/A; 
     const long R = M%A; 
      
-    static long state = 1; 
+    srand (time(NULL));
+    static long state = rand(); 
     long t = A * (state % Q) - R * (state / Q); 
 
     if (t > 0) 
@@ -146,22 +158,15 @@ void quickSort(Car* arr, int left, int right) {
     Car tmp;
     Car pivot = arr[(left + right) / 2];
 
-    /* partition */
+    // partition
     while (i <= j) {
-        cout << "arr[i] = " << arr[i].get_arrival() << endl;
-        cout << "arr[j] = " << arr[j].get_arrival() << endl;
-        cout << "pivot = " << pivot.get_arrival() << endl;
-
         while (arr[i].get_arrival() < pivot.get_arrival()){
-            cout << "stuck i loop" << endl;
             i++;
         }
         while (arr[j].get_arrival() > pivot.get_arrival()){
-            cout << "stuck in j loop" << endl;
             j--;
         }
         if (i<= j) {
-            cout << "switching and incrementing" << endl;
             tmp = arr[i];
             arr[i] = arr[j];
             arr[j] = tmp;
@@ -169,5 +174,11 @@ void quickSort(Car* arr, int left, int right) {
             j--;
         }
     };
-
+    
+    // recursion
+    if (left < j)
+        quickSort(arr, left, j);
+    if (i < right)
+        quickSort(arr, i, right);
+}
 
