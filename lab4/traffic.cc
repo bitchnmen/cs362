@@ -46,6 +46,7 @@ int main(int argc, char *argv[]){
     queue< Car > s;
     queue< Car > e;
     queue< Car > w;
+    Car[] = Car[NUMCARS];
 
     for(int i = 0; i < NUMCARS; i++){
         double temp = rndom();
