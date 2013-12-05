@@ -51,10 +51,10 @@ int main(int argc, char *argv[]){
     
     for(int i = 0; i < NUMCARS; i++){
         double temp = rndom();
-        int cardirection = ((int)(temp * 4)) + 1;
-       
+        int cardirection = ((int)(temp * 4));
+        
         double temp2 = rndom();
-        int cararrival = ((int)(temp2 * MAXARRIVE)) + 1;
+        int cararrival = ((int)(temp2 * MAXARRIVE));
 
         Car c = Car();
         c.set_id(i+1);
@@ -69,14 +69,17 @@ int main(int argc, char *argv[]){
     for(int i = 0; i < NUMCARS; i++){
         cout << "ID: " << cars[i].get_id() << ", Arrival: " << cars[i].get_arrival() << ", Direction: " << cars[i].get_direction() << endl;      
         int cardirection = cars[i].get_direction();
-        if(cardirection == 1){
+        if(cardirection == 0){
             n.push(cars[i]);
-        }else if(cardirection == 2){
+        }else if(cardirection == 1){
             s.push(cars[i]);
-        }else if(cardirection == 3){
+        }else if(cardirection == 2){
             e.push(cars[i]);
-        }else{
+        }else if(cardirection == 3){
             w.push(cars[i]);
+        }else{
+            cout << "ERROR......................" << endl;
+            exit(0);
         }
     }
    
@@ -93,25 +96,25 @@ int main(int argc, char *argv[]){
 
         if(n.front().get_arrival() <= clock_ && n.front().get_id() > 0){
             int temp_direction = n.front().get_direction();
-            pthread_create(&carthreads[0], NULL, approachintersection,  (void*)&temp_direction);
+            pthread_create(&carthreads[0], NULL, approachintersection,  (void*)&n.front());
             n.pop();
             nn = true;
         }
         if(s.front().get_arrival() <= clock_ && s.front().get_id() > 0){
             int temp_direction = s.front().get_direction();
-            pthread_create(&carthreads[1], NULL, approachintersection,  (void*)&temp_direction);
+            pthread_create(&carthreads[1], NULL, approachintersection,  (void*)&s.front());
             s.pop();
             ss = true;
         }
         if(e.front().get_arrival() <= clock_ && e.front().get_id() > 0){
             int temp_direction = e.front().get_direction();
-            pthread_create(&carthreads[2], NULL, approachintersection,  (void*)&temp_direction);
+            pthread_create(&carthreads[2], NULL, approachintersection,  (void*)&e.front());
             e.pop();
             ee = true;
         }
         if(w.front().get_arrival() <= clock_ && w.front().get_id() > 0){
             int temp_direction = w.front().get_direction();
-            pthread_create(&carthreads[3], NULL, approachintersection,  (void*)&temp_direction);
+            pthread_create(&carthreads[3], NULL, approachintersection,  (void*)&w.front());
             w.pop();
             ww = true;
         }
@@ -146,19 +149,19 @@ static void * approachintersection(void* arg){
 
     pthread_mutex_lock(&intersection_mutex);
 
-    int * directionptr = (int*) arg;
-    int direction = *directionptr;
+    Car * carptr = (Car*) arg;
+    Car car = *carptr;
+  
     
-    cout << direction << endl;
-    cout << "\nClock: " << clock_ << endl; 
-    if(direction == 1){
-        printf("Car Moving North-South\n");
-    } else if(direction == 2){
-        printf("Car Moving South-North\n");
-    } else if(direction == 3){
-        printf("Car Moving East-West\n");
-    } else if(direction == 4 ){
-        printf("Car Moving West-East\n");
+    cout << "\nClock: " << clock_<< endl; 
+    if(car.get_direction() == 0){
+        printf("Car %d Moving South\n", car.get_id());
+    } else if(car.get_direction() == 1){
+        printf("Car %d Moving North\n", car.get_id());
+    } else if(car.get_direction() == 2){
+        printf("Car %d Moving West\n", car.get_id());
+    } else if(car.get_direction() == 3 ){
+        printf("Car %d Moving East\n", car.get_id());
     } else {
         printf("ERROR...\n");
     }
