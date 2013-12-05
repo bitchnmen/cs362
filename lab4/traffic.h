@@ -16,6 +16,7 @@
 #include <queue>
 #include <time.h>
 #include <unistd.h>
+#include <stdint.h>
 
 using namespace std;
 

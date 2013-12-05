@@ -98,19 +98,19 @@ int main(int argc, char *argv[]){
             nn = true;
         }
         if(s.front().get_arrival() <= clock_ && s.front().get_id() > 0){
-            int temp_direction = n.front().get_direction();
+            int temp_direction = s.front().get_direction();
             pthread_create(&carthreads[1], NULL, approachintersection,  (void*)&temp_direction);
             s.pop();
             ss = true;
         }
         if(e.front().get_arrival() <= clock_ && e.front().get_id() > 0){
-            int temp_direction = n.front().get_direction();
+            int temp_direction = e.front().get_direction();
             pthread_create(&carthreads[2], NULL, approachintersection,  (void*)&temp_direction);
             e.pop();
             ee = true;
         }
         if(w.front().get_arrival() <= clock_ && w.front().get_id() > 0){
-            int temp_direction = n.front().get_direction();
+            int temp_direction = w.front().get_direction();
             pthread_create(&carthreads[3], NULL, approachintersection,  (void*)&temp_direction);
             w.pop();
             ww = true;
@@ -142,18 +142,25 @@ int main(int argc, char *argv[]){
 }
 
 static void * approachintersection(void* arg){
+
+
     pthread_mutex_lock(&intersection_mutex);
-    unsigned int * directionptr = (unsigned int*) arg;
-    unsigned int direction = (unsigned int) *directionptr;
+
+    int * directionptr = (int*) arg;
+    int direction = *directionptr;
+    
+    cout << direction << endl;
     cout << "\nClock: " << clock_ << endl; 
     if(direction == 1){
         printf("Car Moving North-South\n");
     } else if(direction == 2){
         printf("Car Moving South-North\n");
-    } else if(direction = 3){
+    } else if(direction == 3){
         printf("Car Moving East-West\n");
-    } else {
+    } else if(direction == 4 ){
         printf("Car Moving West-East\n");
+    } else {
+        printf("ERROR...\n");
     }
     drive();
     pthread_mutex_unlock(&intersection_mutex);
