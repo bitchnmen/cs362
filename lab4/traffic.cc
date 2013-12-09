@@ -37,28 +37,66 @@ int main(int argc, char *argv[]){
 	generate_cars();
 
 
-    while(true);	
+        vector< Car* > n = queueList[0];
+        vector< Car* > s = queueList[1];
+        vector< Car* > e = queueList[2];
+        vector< Car* > w = queueList[3];
+
+    while (n.size() > 0  || s.size() > 0 || e.size() > 0 || w.size() > 0) {           
+        
+        bool mod = true;
+        
+        
+        n = queueList[0];
+        s = queueList[1];
+        e = queueList[2];
+        w = queueList[3];
+        
+        /* If it is, a thread is created for each car.*/
+        if(n.size() > 0){
+            //printf("\nErased %d\n", n[0]->get_direction());
+            n[0]->set_id(-1);
+            n[0]->drive();
+            queueList[0].erase(queueList[0].begin());
+            mod = false;
+        }
+        if(s.size() > 0){
+            //printf("\nErased %d\n", s[0]->get_direction());
+            s[0]->set_id(-1);
+            s[0]->drive();
+            queueList[1].erase(queueList[1].begin());
+            mod = false;
+        }
+        if(e.size() > 0){
+            //printf("\nErased %d\n", e[0]->get_direction());
+            e[0]->set_id(-1);
+            e[0]->drive();
+            queueList[2].erase(queueList[2].begin());
+            mod = false;
+        }
+        if(w.size() > 0){
+            //printf("\nErased %d\n", w[0]->get_direction());
+            w[0]->set_id(-1);
+            w[0]->drive();
+            queueList[3].erase(queueList[3].begin());
+            mod = false;
+        }
+        if(mod){
+            increment_clock();
+        }
+    } 
+    
+    //while(true);	
 	printf("\n\nDone\n");
 }
 
 void generate_cars(){
    
-    // Printout showing the current car allocation
-    printf("\nClock: %d", clock_);
-    for (int i = 0; i < 4; i++) {
-        vector< Car* > temp = queueList[i];
-        printf("\nStreet %d: ", i);
-        for(int j = 0; j < temp.size(); j++){
-            if(temp[j]->get_id() != -1){
-                printf( "Car %d, ", temp[j]->get_id());         
-            }
-        }
-    }
-    
+        
     // Every time cars are generated, a random number of cars (to a point) are created and added to a random street
     if (clock_ < maxNumClockTicks) {
         double temp = rndom();
-        int carsPerClockTick = ((int)(temp * 10));
+        int carsPerClockTick = ((int)(temp * numCarsPerTick)) + 1;
         for (int i = 0; i < carsPerClockTick; i++) {
             temp = rndom();
             int direction = ((int)(temp * 4)); 
@@ -67,10 +105,25 @@ void generate_cars(){
             Car* ct = new Car();
             ct->set_id(++currCarId);
             ct->set_direction(direction);
+            ct->set_running(true);
             queueList[direction].push_back(ct);
             ct->start();
         }
     }
+    
+    // Printout showing the current car allocation
+    printf("\nClock: %d", clock_);
+    for (int i = 0; i < 4; i++) {
+        vector< Car* > temp = queueList[i];
+        printf("\nStreet %d (Size: %d): ", i, temp.size());
+        for(int j = 0; j < temp.size(); j++){
+            if(temp[j]->get_id() != -1){
+                printf( "Car %d, ", temp[j]->get_id());         
+            }
+        }
+    }
+
+
 }
 
 //Returns a random number from 0 to 1
@@ -91,7 +144,7 @@ double rndom() {
     return ((double) state/M); 
 } 
 
-void drive(){
+void increment_clock(){
 	clock_++;
 	generate_cars();
 }
@@ -167,11 +220,14 @@ void Car::set_direction(int direction_) {
     direction = direction_;
 }
 
+void Car::set_running(bool running_) {
+    running = running_;
+}
+
 void* Car::run() {
-    pthread_mutex_lock(&intersection_semaphore);
-    drive();
-    pthread_mutex_unlock(&intersection_semaphore);
-    vector< Car* > v = queueList[direction];	
+    while(running);
+   
+    /* 
     bool exit = false;
     for(int i = 0; i < v.size() && !exit; i++ ){
         if (v[i]->get_id() == id){
@@ -182,6 +238,14 @@ void* Car::run() {
             v[i]->set_id(-1);
         }
     }
+    */
 }
 
+void Car::drive(){
+    pthread_mutex_lock(&intersection_semaphore);
+    increment_clock();
+    pthread_mutex_unlock(&intersection_semaphore);
+    running = false;
+
+}
 
