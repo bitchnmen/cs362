@@ -26,7 +26,6 @@ static void * approachintersection(void* arg);
 
 double rndom();
 
-
 void generate_cars();
 
 void increment_clock();
@@ -67,7 +66,6 @@ class Car : public Thread{
     void set_id(int);
     void set_running(bool);
     void drive();
-    
 
 };
 

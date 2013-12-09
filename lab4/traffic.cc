@@ -14,8 +14,6 @@ int main(int argc, char *argv[]){
     cout << "\nSelect max number of clockticks in which you can make cars: ";
     cin >> maxNumClockTicks;
     
-
-    
     if(numCarsPerTick < 1){
         cout << "\n\n Please select a valid amount of cars per clocktick. \n\n";
         exit(1);
@@ -36,46 +34,42 @@ int main(int argc, char *argv[]){
 	// In order to see the program run, there must be cars generated.
 	generate_cars();
 
-
-        vector< Car* > n = queueList[0];
-        vector< Car* > s = queueList[1];
-        vector< Car* > e = queueList[2];
-        vector< Car* > w = queueList[3];
-
+    //temp lists for while loop
+    vector< Car* > n = queueList[0];
+    vector< Car* > s = queueList[1];
+    vector< Car* > e = queueList[2];
+    vector< Car* > w = queueList[3];
+    
+    //if there are any cars left, continue running
     while (n.size() > 0  || s.size() > 0 || e.size() > 0 || w.size() > 0) {           
         
         bool mod = true;
-        
-        
+        //update temp lists
         n = queueList[0];
         s = queueList[1];
         e = queueList[2];
         w = queueList[3];
         
-        /* If it is, a thread is created for each car.*/
+        /* If there is a car in the queue, take the first one and let it drive is created for each car.*/
         if(n.size() > 0){
-            //printf("\nErased %d\n", n[0]->get_direction());
             n[0]->set_id(-1);
             n[0]->drive();
             queueList[0].erase(queueList[0].begin());
             mod = false;
         }
         if(s.size() > 0){
-            //printf("\nErased %d\n", s[0]->get_direction());
             s[0]->set_id(-1);
             s[0]->drive();
             queueList[1].erase(queueList[1].begin());
             mod = false;
         }
         if(e.size() > 0){
-            //printf("\nErased %d\n", e[0]->get_direction());
             e[0]->set_id(-1);
             e[0]->drive();
             queueList[2].erase(queueList[2].begin());
             mod = false;
         }
         if(w.size() > 0){
-            //printf("\nErased %d\n", w[0]->get_direction());
             w[0]->set_id(-1);
             w[0]->drive();
             queueList[3].erase(queueList[3].begin());
@@ -86,7 +80,6 @@ int main(int argc, char *argv[]){
         }
     } 
     
-    //while(true);	
 	printf("\n\nDone\n");
 }
 
@@ -134,6 +127,7 @@ double rndom() {
     const long R = M%A; 
      
     srand (time(NULL));
+    //the given random funtion didnt work so i modified it to use the built in c++ one inside it
     static long state = rand(); 
     long t = A * (state % Q) - R * (state / Q); 
 
@@ -149,7 +143,7 @@ void increment_clock(){
 	generate_cars();
 }
 
-
+//methods for the Thread abstract class 
 static void* runThread(void* arg){
     
     return ((Thread*)arg)->run();
@@ -204,6 +198,8 @@ pthread_t Thread::self() {
     return m_tid;
 }
 
+
+//methods for the car class
 int Car::get_id() {
     return id;
 }
@@ -226,19 +222,6 @@ void Car::set_running(bool running_) {
 
 void* Car::run() {
     while(running);
-   
-    /* 
-    bool exit = false;
-    for(int i = 0; i < v.size() && !exit; i++ ){
-        if (v[i]->get_id() == id){
-            exit = true;
-            //v.erase(v.begin() + i);
-            //printf("\nErased Car %d\n", id);
-            printf("\nErased From %d\n", direction);
-            v[i]->set_id(-1);
-        }
-    }
-    */
 }
 
 void Car::drive(){
