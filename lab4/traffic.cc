@@ -1,172 +1,76 @@
 #include "traffic.h"
 
-pthread_mutex_t intersection_mutex;
-int clock_ = 0;
+pthread_mutex_t intersection_semaphore;
+int clock_;
+int currCarId;
+int numCarsPerTick;
+int maxNumClockTicks;
+vector< vector< Car* > > queueList;
 
 int main(int argc, char *argv[]){
-    int NUMCARS = -1;
-    int MAXARRIVE = -1;
-    cout << "\nSelect number of cars: ";
-    cin >> NUMCARS;
+    cout << "\nSelect max number of cars to create per clocktick: ";
+    cin >> numCarsPerTick;
    
-    cout << "\nSelect max arrival time: ";
-    cin >> MAXARRIVE;
+    cout << "\nSelect max number of clockticks in which you can make cars: ";
+    cin >> maxNumClockTicks;
     
 
     
-    if(NUMCARS < 1){
-        cout << "\n\n Please select a valid amount of cars. \n\n";
+    if(numCarsPerTick < 1){
+        cout << "\n\n Please select a valid amount of cars per clocktick. \n\n";
         exit(1);
     }
 
-    if(MAXARRIVE < 1){
-        cout << "\n\n Please select a valid maximum arrival time. \n\n";
+    if(maxNumClockTicks < 1){
+        cout << "\n\n Please select a valid maximum clockticks. \n\n";
         exit(1);
     }
 
-   /*
-    int index, tid;
-    int carids[NUMCARS];
-    pthread_t carthreads[NUMCARS];
-   
-      
-    
-    // Start up a thread for each car
-    for(index = 0; index <NUMCARS; index++){
-        carids[index] = index;
-        tid = pthread_create(&carthreads[index], NULL, approachintersection,  (void*)&carids[index]);
-    }
+	//Creates a new ArrayList, fills it with 4 linked lists, trims it to the appropriate size
+	for (int i = 0; i < 4; i++) {
+        vector< Car* > t;
+		queueList.push_back(t);
+	}
+	
+	// Create new cars, add cars to queue; This starts the entire process. 
+	// In order to see the program run, there must be cars generated.
+	generate_cars();
 
-    // Wait for every car thread to finish
-    for(index = 0; index <NUMCARS; index++){
-        pthread_join(carthreads[index], NULL);
-    }
-   */
 
-    queue< Car > n;
-    queue< Car > s;
-    queue< Car > e;
-    queue< Car > w;
-    Car *cars = new Car[NUMCARS];
-    
-    for(int i = 0; i < NUMCARS; i++){
-        double temp = rndom();
-        int cardirection = ((int)(temp * 4));
-        
-        double temp2 = rndom();
-        int cararrival = ((int)(temp2 * MAXARRIVE));
-
-        Car c = Car();
-        c.set_id(i+1);
-        c.set_arrival(cararrival);
-        c.set_direction(cardirection);
-           
-        cars[i] = c;
-    }
-
-    quickSort(cars, 0, NUMCARS-1);
-
-    for(int i = 0; i < NUMCARS; i++){
-        cout << "ID: " << cars[i].get_id() << ", Arrival: " << cars[i].get_arrival() << ", Direction: " << cars[i].get_direction() << endl;      
-        int cardirection = cars[i].get_direction();
-        if(cardirection == 0){
-            n.push(cars[i]);
-        }else if(cardirection == 1){
-            s.push(cars[i]);
-        }else if(cardirection == 2){
-            e.push(cars[i]);
-        }else if(cardirection == 3){
-            w.push(cars[i]);
-        }else{
-            cout << "ERROR......................" << endl;
-            exit(0);
-        }
-    }
-   
-    while(n.size() > 0 || s.size() > 0 || e.size() > 0 || w.size() > 0){
-        
-        int tempclock = clock_;
-
-        pthread_t carthreads[4];
-        
-        bool nn = false;
-        bool ss = false;
-        bool ee = false;
-        bool ww = false;
-
-        if(n.front().get_arrival() <= clock_ && n.front().get_id() > 0){
-            int temp_direction = n.front().get_direction();
-            pthread_create(&carthreads[0], NULL, approachintersection,  (void*)&n.front());
-            n.pop();
-            nn = true;
-        }
-        if(s.front().get_arrival() <= clock_ && s.front().get_id() > 0){
-            int temp_direction = s.front().get_direction();
-            pthread_create(&carthreads[1], NULL, approachintersection,  (void*)&s.front());
-            s.pop();
-            ss = true;
-        }
-        if(e.front().get_arrival() <= clock_ && e.front().get_id() > 0){
-            int temp_direction = e.front().get_direction();
-            pthread_create(&carthreads[2], NULL, approachintersection,  (void*)&e.front());
-            e.pop();
-            ee = true;
-        }
-        if(w.front().get_arrival() <= clock_ && w.front().get_id() > 0){
-            int temp_direction = w.front().get_direction();
-            pthread_create(&carthreads[3], NULL, approachintersection,  (void*)&w.front());
-            w.pop();
-            ww = true;
-        }
-        if(clock_ == tempclock){
-            clock_++; 
-            //printf("No cars drove through the intersection at clock %d.\n", clock_);
-        }
-        
-        // Wait for every car thread to finish
-        if(nn == true){
-            pthread_join(carthreads[0], NULL);
-        }
-        if(ss == true){
-            pthread_join(carthreads[1], NULL);
-        }
-        if(ee == true){
-            pthread_join(carthreads[2], NULL);
-        }
-        if(ww == true){
-            pthread_join(carthreads[3], NULL);
-        }
-        
-
-    }
-    
-    printf("Done\n");
-    return 1;
+    while(true);	
+	printf("\n\nDone\n");
 }
 
-static void * approachintersection(void* arg){
-
-
-    pthread_mutex_lock(&intersection_mutex);
-
-    Car * carptr = (Car*) arg;
-    Car car = *carptr;
-  
-    
-    cout << "\nClock: " << clock_<< endl; 
-    if(car.get_direction() == 0){
-        printf("Car %d Moving South\n", car.get_id());
-    } else if(car.get_direction() == 1){
-        printf("Car %d Moving North\n", car.get_id());
-    } else if(car.get_direction() == 2){
-        printf("Car %d Moving West\n", car.get_id());
-    } else if(car.get_direction() == 3 ){
-        printf("Car %d Moving East\n", car.get_id());
-    } else {
-        printf("ERROR...\n");
+void generate_cars(){
+   
+    // Printout showing the current car allocation
+    printf("\nClock: %d", clock_);
+    for (int i = 0; i < 4; i++) {
+        vector< Car* > temp = queueList[i];
+        printf("\nStreet %d: ", i);
+        for(int j = 0; j < temp.size(); j++){
+            if(temp[j]->get_id() != -1){
+                printf( "Car %d, ", temp[j]->get_id());         
+            }
+        }
     }
-    drive();
-    pthread_mutex_unlock(&intersection_mutex);
+    
+    // Every time cars are generated, a random number of cars (to a point) are created and added to a random street
+    if (clock_ < maxNumClockTicks) {
+        double temp = rndom();
+        int carsPerClockTick = ((int)(temp * 10));
+        for (int i = 0; i < carsPerClockTick; i++) {
+            temp = rndom();
+            int direction = ((int)(temp * 4)); 
+            
+            //Cars are created, added, and then the thread starts.
+            Car* ct = new Car();
+            ct->set_id(++currCarId);
+            ct->set_direction(direction);
+            queueList[direction].push_back(ct);
+            ct->start();
+        }
+    }
 }
 
 //Returns a random number from 0 to 1
@@ -188,35 +92,96 @@ double rndom() {
 } 
 
 void drive(){
-    clock_ = clock_ + 1;
+	clock_++;
+	generate_cars();
 }
 
-void quickSort(Car* arr, int left, int right) {
-    int i = left, j = right;
-    Car tmp;
-    Car pivot = arr[(left + right) / 2];
 
-    // partition
-    while (i <= j) {
-        while (arr[i].get_arrival() < pivot.get_arrival()){
-            i++;
-        }
-        while (arr[j].get_arrival() > pivot.get_arrival()){
-            j--;
-        }
-        if (i<= j) {
-            tmp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = tmp;
-            i++;
-            j--;
-        }
-    };
+static void* runThread(void* arg){
     
-    // recursion
-    if (left < j)
-        quickSort(arr, left, j);
-    if (i < right)
-        quickSort(arr, i, right);
+    return ((Thread*)arg)->run();
 }
+
+Thread::Thread() : m_tid(0), m_running(0), m_detached(0){}
+
+Thread::~Thread()
+{
+    if (m_running == 1 && m_detached == 0) {
+        pthread_detach(m_tid);
+    }
+    if (m_running == 1) {
+        pthread_cancel(m_tid);
+    }
+}
+
+int Thread::start()
+{
+    int result = pthread_create(&m_tid, NULL, runThread, this);
+    if (result == 0) {
+        m_running = 1;
+    }
+    return result;
+}
+
+int Thread::join()
+{
+    int result = -1;
+    if (m_running == 1) {
+        result = pthread_join(m_tid, NULL);
+        if (result == 0) {
+            m_detached = 0;
+        }
+    }
+    return result;
+}
+
+int Thread::detach()
+{
+    int result = -1;
+    if (m_running == 1 && m_detached == 0) {
+        result = pthread_detach(m_tid);
+        if (result == 0) {
+            m_detached = 1;
+        }
+    }
+    return result;
+}
+
+pthread_t Thread::self() {
+    return m_tid;
+}
+
+int Car::get_id() {
+    return id;
+}
+
+int Car::get_direction() {
+    return direction;
+}
+
+void Car::set_id(int id_) {
+    id = id_;
+}
+
+void Car::set_direction(int direction_) {
+    direction = direction_;
+}
+
+void* Car::run() {
+    pthread_mutex_lock(&intersection_semaphore);
+    drive();
+    pthread_mutex_unlock(&intersection_semaphore);
+    vector< Car* > v = queueList[direction];	
+    bool exit = false;
+    for(int i = 0; i < v.size() && !exit; i++ ){
+        if (v[i]->get_id() == id){
+            exit = true;
+            //v.erase(v.begin() + i);
+            //printf("\nErased Car %d\n", id);
+            printf("\nErased From %d\n", direction);
+            v[i]->set_id(-1);
+        }
+    }
+}
+
 
